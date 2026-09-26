@@ -3,6 +3,7 @@ import { env } from "@traveler-app/env/server";
 
 import { PrismaClient } from "../prisma/generated/client";
 
+export type { Place } from "../prisma/generated/client";
 export * from "../prisma/generated/enums";
 export type * from "../prisma/generated/models";
 
