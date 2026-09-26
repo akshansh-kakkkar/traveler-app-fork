@@ -10,7 +10,7 @@ model User {
   accounts      Account[]
   ownedTrips    Trip[]       @relation("TripOwner")
   memberships   TripMember[]
-
+	createdTripInvites TripInvite[] @relation("TripInviteCreator")
   @@unique([email])
   @@map("user")
 }

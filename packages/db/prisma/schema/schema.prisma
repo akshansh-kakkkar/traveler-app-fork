@@ -27,7 +27,7 @@ model Trip {
   items       ItineraryItem[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
-
+	invites TripInvite[]
   @@index([ownerId])
   @@map("trip")
 }
@@ -93,8 +93,8 @@ enum PriceBand {
 
 model Place {
   id           String          @id @default(cuid())
-  cityId       String // add city table later
-  osmId        String?         @unique // osm free map data
+  cityId       String
+  osmId        String?         @unique
   name         String
   address      String?
   latitude     Float
@@ -116,4 +116,20 @@ model Place {
 
   @@index([cityId, verified, category])
   @@map("place")
+}
+
+model TripInvite {
+	id String @id @default(cuid())
+	tripId String
+	createdById String
+	token String @unique
+	expiresAt DateTime?
+	trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  createdBy   User     @relation("TripInviteCreator", fields: [createdById], references: [id], onDelete: Cascade)
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	@@index([tripId])
+	@@index([createdById])
+	@@map("trip_invite")
 }
