@@ -37,6 +37,17 @@ const INDOOR_MAPPING: Record<string, boolean> = {
 	"tourism=viewpoint": false,
 };
 
+// Tags that suggest a palce is notable
+const SCORE_SIGNALS: Record<string, number> = {
+	wikidata: 40,
+	heritage: 25,
+	website: 5,
+	opening_hours: 5,
+	"name:en": 5,
+	image: 5,
+	description: 5,
+};
+
 const OVERPASS_URLS = [
 	"https://overpass-api.de/api/interpreter",
 	"https://overpass.private.coffee/api/interpreter",
@@ -86,6 +97,27 @@ console.log(`\nSaving ${toSave.length} places to the database...`);
 
 let saved = 0;
 for (const place of toSave) {
+	const osmFields = {
+		name: place.name,
+		latitude: place.latitude,
+		longitude: place.longitude,
+		openingHours: place.openingHours,
+		address: place.address,
+	};
+
+	const updated = await prisma.place.updateMany({
+		where: { osmId: place.osmId as string, scoreSource: "osm" },
+		data: { ...osmFields, score: place.score },
+	});
+
+	if (updated.count === 0) {
+		await prisma.place.upsert({
+			where: { osmId: place.osmId as string },
+			create: place,
+			update: osmFields,
+		});
+	}
+
 	await prisma.place.upsert({
 		where: { osmId: place.osmId as string },
 		create: place,
@@ -154,6 +186,8 @@ function toPlace(element: OsmElement): Prisma.PlaceCreateInput | SkipReason {
 		latitude: lat,
 		longitude: lon,
 		category,
+		labels: [],
+		score: scorePlace(tags),
 		indoor: lookupTag(tags, INDOOR_MAPPING),
 		openingHours: tags.opening_hours ?? null,
 		address:
@@ -166,6 +200,23 @@ function toPlace(element: OsmElement): Prisma.PlaceCreateInput | SkipReason {
 				.filter(Boolean)
 				.join(", ") || null,
 	};
+}
+
+function scorePlace(tags: Record<string, string>): number {
+	let total = 0;
+
+	for (const [key, points] of Object.entries(SCORE_SIGNALS)) {
+		if (tags[key]) total += points;
+	}
+
+	if (!tags.wikidata && tags.wikipedia) total += 30;
+
+	if (tags.tourism === "attraction" || tags.tourism === "viewpoint")
+		total += 15;
+
+	if (tags.historic) total += 10;
+
+	return Math.min(total, 100);
 }
 
 function count(values: string[]): Record<string, number> {
@@ -200,6 +251,27 @@ function printSummary(
 		.sort((a, b) => b[1] - a[1]);
 	console.log(`\nNames used more than once: ${duplicates.length} (top 10)`);
 	console.table(Object.fromEntries(duplicates.slice(0, 10)));
+
+	console.log("\nScore buckets:");
+	console.table(
+		count(
+			places.map((p) => {
+				const s = (p.score as number) ?? 0;
+				if (s >= 70) return "70+";
+				if (s >= 40) return "40-69";
+				if (s >= 1) return "1-39";
+				return "0";
+			}),
+		),
+	);
+
+	console.log("\nTop 10 by score:");
+	console.table(
+		[...places]
+			.sort((a, b) => ((b.score as number) ?? 0) - ((a.score as number) ?? 0))
+			.slice(0, 10)
+			.map((p) => ({ name: p.name, category: p.category, score: p.score })),
+	);
 }
 
 async function loadOsmElements(): Promise<OsmElement[]> {
