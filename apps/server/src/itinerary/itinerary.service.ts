@@ -44,17 +44,30 @@ export async function createItineraryItemService({
   });
   const position = lastItem ? lastItem.position + 1 : 0;
 
-  const item = await prisma.itineraryItem.create({
-    data: {
-      tripId: data.tripId,
-      title: data.title,
-      notes: data.notes,
-      startAt: data.startAt,
-      endAt: data.endAt,
-      placeId: data.placeId,
-      position,
-    },
-  });
+  const [item] = await prisma.$transaction([
+    prisma.itineraryItem.create({
+      data: {
+        tripId: data.tripId,
+        title: data.title,
+        notes: data.notes,
+        startAt: data.startAt,
+        endAt: data.endAt,
+        placeId: data.placeId,
+        position,
+      },
+    }),
+
+    prisma.trip.update({
+      where: {
+        id: data.tripId,
+      },
+      data: {
+        version: {
+          increment: 1,
+        },
+      },
+    }),
+  ]);
 
   return item;
 }
@@ -149,28 +162,29 @@ export async function updateItineraryItemService({
   };
 }) {
   const item = await prisma.itineraryItem.findFirst({
-    where: {
-      id: itemId,
-      trip: {
-        OR: [
-          {
-            ownerId: userId,
-          },
-          {
-            members: {
-              some: {
-                userId,
-                role: "editor",
-              },
-            },
-          },
-        ],
-      },
-    },
-    select: {
-      id: true,
-      version: true,
-    },
+		where : {
+			id : itemId,
+			trip : {
+				OR : [
+					{
+						ownerId : userId,
+					},
+					{
+						members : {
+							some : {
+								userId,
+								role : 'editor',
+							},
+						},
+					},
+				],
+			},
+		},
+		select : {
+			id : true,
+			tripId : true,
+			version : true
+		},
   });
 
   if (!item) {
@@ -187,7 +201,7 @@ export async function updateItineraryItemService({
   const result = await prisma.itineraryItem.updateMany({
     where: {
       id: itemId,
-			version : data.version
+      version: data.version,
     },
     data: {
       title: data.title,
@@ -196,33 +210,44 @@ export async function updateItineraryItemService({
       endAt: data.endAt,
       placeId: data.placeId,
       done: data.done,
-			version : {
-				increment : 1,
-			}
+      version: {
+        increment: 1,
+      },
     },
   });
 
-	if(result.count === 0){
-		const currentItem = await prisma.itineraryItem.findUnique({
-			where : {
-				id : itemId,
-			},
-			select : {
-				version : true,
-			},
-		});
+  if (result.count === 0) {
+    const currentItem = await prisma.itineraryItem.findUnique({
+      where: {
+        id: itemId,
+      },
+      select: {
+        version: true,
+      },
+    });
 
-		return {
-			conflict : true,
-			serverVersion : currentItem?.version ?? null,
-		}
-	}
+    return {
+      conflict: true,
+      serverVersion: currentItem?.version ?? null,
+    };
+  }
 
-	return prisma.itineraryItem.findUnique({
-		where :{
-			id : itemId,
-	}
-	})
+	await prisma.trip.update({
+		where : {
+			id : item.tripId,
+		},
+		data : {
+			version : {
+				increment : 1,
+			},
+		},
+	});
+
+  return prisma.itineraryItem.findUnique({
+    where: {
+      id: itemId,
+    },
+  });
 }
 
 export async function deleteItineraryItemService({
@@ -253,16 +278,30 @@ export async function deleteItineraryItemService({
     },
     select: {
       id: true,
+			tripId : true,
     },
   });
 
   if (!item) return null;
 
-  await prisma.itineraryItem.delete({
-    where: {
-      id: item.id,
-    },
-  });
+  await prisma.$transaction([
+    prisma.itineraryItem.delete({
+      where: {
+        id: item.id,
+      },
+    }),
+
+		prisma.trip.update({
+			where : {
+				id : item.tripId
+			},
+			data : {
+				version : {
+					increment : 1
+				}
+			}
+		})
+  ]);
 
   return true;
 }
@@ -271,12 +310,12 @@ export async function reorderItineraryItemsService({
   userId,
   tripId,
   itemIds,
-	version
+  version,
 }: {
   userId: string;
   tripId: string;
   itemIds: string[];
-	version : number;
+  version: number;
 }) {
   const trip = await prisma.trip.findFirst({
     where: {
@@ -297,18 +336,18 @@ export async function reorderItineraryItemsService({
     },
     select: {
       id: true,
-			version : true,
+      version: true,
     },
   });
 
   if (!trip) return null;
 
-	if(trip.version !== version){
-		return {
-			conflict : true,
-			serverVersion : trip.version,
-		}
-	}
+  if (trip.version !== version) {
+    return {
+      conflict: true,
+      serverVersion: trip.version,
+    };
+  }
   const items = await prisma.itineraryItem.findMany({
     where: {
       tripId,
@@ -334,16 +373,16 @@ export async function reorderItineraryItemsService({
         },
       })
     ),
-		prisma.trip.update({
-			where : {
-				id : tripId,
-			},
-			data : {
-				version : {
-					increment : 1,
-				}
-			}
-		})
+    prisma.trip.update({
+      where: {
+        id: tripId,
+      },
+      data: {
+        version: {
+          increment: 1,
+        },
+      },
+    }),
   ]);
 
   return true;
