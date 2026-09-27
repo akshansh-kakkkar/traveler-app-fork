@@ -97,10 +97,12 @@ model Place {
   osmId        String?         @unique // osm free map data
   name         String
   address      String?
+  score        Float           @default(0) // 0-100 higher more must see
+  scoreSource  String          @default("osm") // oms | ai | guide
   latitude     Float
   longitude    Float
   category     PlaceCategory
-  labels       PlaceLabel[]
+  labels       PlaceLabel[]    @default([])
   openingHours String?
   priceBand    PriceBand?
   indoor       Boolean?
@@ -115,5 +117,6 @@ model Place {
   updatedAt DateTime @updatedAt
 
   @@index([cityId, verified, category])
+  @@index([cityId, category, score])
   @@map("place")
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "trip_member" ADD COLUMN "position" INTEGER NOT NULL DEFAULT 0;
