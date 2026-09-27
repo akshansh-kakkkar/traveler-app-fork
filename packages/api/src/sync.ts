@@ -12,7 +12,7 @@ export type SyncOperation =
       };
       createdAt: number;
 			status? : "pending" | "conflict";
-			serverVersion : number | null;
+			serverVersion? : number | null;
     }
   | {
       id: string;

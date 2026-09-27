@@ -10,28 +10,28 @@ import express, { type Express } from "express";
 const app: Express = express();
 
 app.use(
-	cors({
-		origin: env.CORS_ORIGIN,
-		methods: ["GET", "POST", "OPTIONS"],
-		allowedHeaders: ["Content-Type", "Authorization"],
-		credentials: true,
-	}),
+  cors({
+    origin: env.CORS_ORIGIN,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
 );
 
 app.all("/api/auth{/*path}", toNodeHandler(auth));
 
 app.use(
-	"/trpc",
-	createExpressMiddleware({
-		router: appRouter,
-		createContext,
-	}),
+  "/trpc",
+  createExpressMiddleware({
+    router: appRouter,
+    createContext,
+  })
 );
 
 app.use(express.json());
 
 app.get("/", (_req, res) => {
-	res.status(200).send("OK");
+  res.status(200).send("OK");
 });
 
 export default app;

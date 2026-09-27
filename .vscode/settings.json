@@ -9,7 +9,7 @@
 		"source.organizeImports.biome": "explicit"
 	},
 	"[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-	"[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
 	"[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
 	"[json]": { "editor.defaultFormatter": "biomejs.biome" },
 	"[jsonc]": { "editor.defaultFormatter": "biomejs.biome" },

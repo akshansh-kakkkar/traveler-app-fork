@@ -1,6 +1,6 @@
 import { trpcClient } from "@/utils/trpc";
 import { enqueueSyncOperation } from "./sync-queue";
-
+import type { SyncOperation } from "../../../../packages/api/src/sync";
 type UpdateTripInput = {
   tripId: string;
   version: number;
@@ -18,15 +18,15 @@ export async 	function updateTripWithOfflineSupport({
 	data,
 } : UpdateTripInput){
 	if(!navigator.onLine){
-		await enqueueSyncOperation({
+		const operation :  SyncOperation = {
 			id : crypto.randomUUID(),
 			type : "update-trip",
 			tripId,
 			version,
 			data,
 			createdAt : Date.now(),
-		});
-
+		}
+		await enqueueSyncOperation(operation)
 		return { queued : true }
 	}
 

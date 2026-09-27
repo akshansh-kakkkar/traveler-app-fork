@@ -14,5 +14,5 @@ export const deleteTripInviteSchema = z.object({
 });
 
 export const getTripInviteSchema = z.object({
-	tripId : z.string().min(1),
-})
+  tripId: z.string().min(1),
+});
