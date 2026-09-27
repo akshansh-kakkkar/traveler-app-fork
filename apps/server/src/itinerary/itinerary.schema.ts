@@ -16,6 +16,7 @@ export const ItineraryItemIdSchema = z.object({
 export const reorderItineraryItemsSchema = z.object({
 	tripId : z.string().min(1),
 	itemIds : z.array(z.string().min(1)).min(1),
+	version : z.number().int().positive(),
 })
 
 export const updateItineraryItemSchema = z.object({
@@ -26,4 +27,5 @@ export const updateItineraryItemSchema = z.object({
 	startAt : z.coerce.date().nullable().optional(),
 	endAt : z.coerce.date().nullable().optional(),
 	done : z.boolean().optional(),
+	version : z.number().int().positive(),
 })

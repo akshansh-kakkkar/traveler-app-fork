@@ -27,7 +27,9 @@ model Trip {
   items       ItineraryItem[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
-	invites TripInvite[]
+  version     Int             @default(1)
+  invites     TripInvite[]
+
   @@index([ownerId])
   @@map("trip")
 }
@@ -58,6 +60,7 @@ model ItineraryItem {
   place     Place?    @relation(fields: [placeId], references: [id], onDelete: SetNull)
   startAt   DateTime?
   endAt     DateTime?
+  version   Int       @default(1)
   done      Boolean   @default(false)
   position  Int
   createdAt DateTime  @default(now())
@@ -122,17 +125,17 @@ model Place {
 }
 
 model TripInvite {
-	id String @id @default(cuid())
-	tripId String
-	createdById String
-	token String @unique
-	expiresAt DateTime?
-	trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  createdBy   User     @relation("TripInviteCreator", fields: [createdById], references: [id], onDelete: Cascade)
-	createdAt DateTime @default(now())
-	updatedAt DateTime @updatedAt
+  id          String    @id @default(cuid())
+  tripId      String
+  createdById String
+  token       String    @unique
+  expiresAt   DateTime?
+  trip        Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  createdBy   User      @relation("TripInviteCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-	@@index([tripId])
-	@@index([createdById])
-	@@map("trip_invite")
+  @@index([tripId])
+  @@index([createdById])
+  @@map("trip_invite")
 }
