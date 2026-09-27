@@ -13,6 +13,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import type { trpc } from "@/utils/trpc";
 
 import "../index.css";
+import { useSyncConflicts } from "@/lib/use-sync-conflicts";
 
 export interface RouterAppContext {
 	trpc: typeof trpc;
@@ -41,6 +42,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function RootComponent() {
+		const { conflicts } = useSyncConflicts();
 	return (
 		<>
 			<HeadContent />
@@ -54,6 +56,14 @@ function RootComponent() {
 					<Header />
 					<Outlet />
 				</div>
+				{
+					conflicts.length > 0 && (
+						<div>
+							{conflicts.length} offline change
+							{conflicts.length !== 1 ? "s" : ""} couldn't be synced
+						</div>	
+					)
+				}
 				<Toaster richColors />
 			</ThemeProvider>
 			<TanStackRouterDevtools position="bottom-left" />

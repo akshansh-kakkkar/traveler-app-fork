@@ -11,6 +11,8 @@ export type SyncOperation =
         endDate?: string | null;
       };
       createdAt: number;
+			status? : "pending" | "conflict";
+			serverVersion : number | null;
     }
   | {
       id: string;
@@ -26,4 +28,6 @@ export type SyncOperation =
         done?: boolean;
       };
       createdAt: number;
+			status? : "pending" | "conflict";
+			serverVersion? : number | null;
     };
