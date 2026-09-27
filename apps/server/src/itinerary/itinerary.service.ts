@@ -42,10 +42,23 @@ export async function createItineraryItemService({
       position: true,
     },
   });
-  const position = lastItem ? lastItem.position + 1 : 0;
 
-  const [item] = await prisma.$transaction([
-    prisma.itineraryItem.create({
+  const item = await prisma.$transaction(async (tx) => {
+    const lastItem = await tx.itineraryItem.findFirst({
+      where: {
+        tripId: data.tripId,
+      },
+      orderBy: {
+        position: "desc",
+      },
+      select: {
+        position: true,
+      },
+    });
+
+    const position = lastItem ? lastItem.position + 1 : 0;
+
+    const createdItem = await tx.itineraryItem.create({
       data: {
         tripId: data.tripId,
         title: data.title,
@@ -55,9 +68,9 @@ export async function createItineraryItemService({
         placeId: data.placeId,
         position,
       },
-    }),
+    });
 
-    prisma.trip.update({
+    await tx.trip.update({
       where: {
         id: data.tripId,
       },
@@ -66,8 +79,10 @@ export async function createItineraryItemService({
           increment: 1,
         },
       },
-    }),
-  ]);
+    });
+
+    return createdItem;
+  });
 
   return item;
 }
@@ -109,7 +124,7 @@ export async function getItineraryItemServices({
       tripId,
     },
     orderBy: {
-      position: "desc",
+      position: "asc",
     },
   });
   return items;
@@ -162,29 +177,29 @@ export async function updateItineraryItemService({
   };
 }) {
   const item = await prisma.itineraryItem.findFirst({
-		where : {
-			id : itemId,
-			trip : {
-				OR : [
-					{
-						ownerId : userId,
-					},
-					{
-						members : {
-							some : {
-								userId,
-								role : 'editor',
-							},
-						},
-					},
-				],
-			},
-		},
-		select : {
-			id : true,
-			tripId : true,
-			version : true
-		},
+    where: {
+      id: itemId,
+      trip: {
+        OR: [
+          {
+            ownerId: userId,
+          },
+          {
+            members: {
+              some: {
+                userId,
+                role: "editor",
+              },
+            },
+          },
+        ],
+      },
+    },
+    select: {
+      id: true,
+      tripId: true,
+      version: true,
+    },
   });
 
   if (!item) {
@@ -198,25 +213,47 @@ export async function updateItineraryItemService({
     };
   }
 
-  const result = await prisma.itineraryItem.updateMany({
-    where: {
-      id: itemId,
-      version: data.version,
-    },
-    data: {
-      title: data.title,
-      notes: data.notes,
-      startAt: data.startAt,
-      endAt: data.endAt,
-      placeId: data.placeId,
-      done: data.done,
-      version: {
-        increment: 1,
+  const result = await prisma.$transaction(async (tx) => {
+    const updated = await tx.itineraryItem.updateMany({
+      where: {
+        id: itemId,
+        version: data.version,
       },
-    },
+      data: {
+        title: data.title,
+        notes: data.notes,
+        startAt: data.startAt,
+        endAt: data.endAt,
+        placeId: data.placeId,
+        done: data.done,
+        version: {
+          increment: 1,
+        },
+      },
+    });
+
+    if (updated.count === 0) {
+      return null;
+    }
+    await tx.trip.update({
+      where: {
+        id: item.tripId,
+      },
+      data: {
+        version: {
+          increment: 1,
+        },
+      },
+    });
+
+    return tx.itineraryItem.findUnique({
+      where: {
+        id: itemId,
+      },
+    });
   });
 
-  if (result.count === 0) {
+  if (!result) {
     const currentItem = await prisma.itineraryItem.findUnique({
       where: {
         id: itemId,
@@ -231,23 +268,6 @@ export async function updateItineraryItemService({
       serverVersion: currentItem?.version ?? null,
     };
   }
-
-	await prisma.trip.update({
-		where : {
-			id : item.tripId,
-		},
-		data : {
-			version : {
-				increment : 1,
-			},
-		},
-	});
-
-  return prisma.itineraryItem.findUnique({
-    where: {
-      id: itemId,
-    },
-  });
 }
 
 export async function deleteItineraryItemService({
@@ -278,7 +298,7 @@ export async function deleteItineraryItemService({
     },
     select: {
       id: true,
-			tripId : true,
+      tripId: true,
     },
   });
 
@@ -291,16 +311,16 @@ export async function deleteItineraryItemService({
       },
     }),
 
-		prisma.trip.update({
-			where : {
-				id : item.tripId
-			},
-			data : {
-				version : {
-					increment : 1
-				}
-			}
-		})
+    prisma.trip.update({
+      where: {
+        id: item.tripId,
+      },
+      data: {
+        version: {
+          increment: 1,
+        },
+      },
+    }),
   ]);
 
   return true;
@@ -341,6 +361,11 @@ export async function reorderItineraryItemsService({
   });
 
   if (!trip) return null;
+  const uniqueItemIds = new Set(itemIds);
+
+  if (uniqueItemIds.size !== itemIds.length) {
+    throw new Error("Duplicate item IDs");
+  }
 
   if (trip.version !== version) {
     return {
@@ -362,28 +387,54 @@ export async function reorderItineraryItemsService({
     throw new Error("Invalid item list");
   }
 
-  await prisma.$transaction([
-    ...itemIds.map((itemId, index) =>
-      prisma.itineraryItem.update({
-        where: {
-          id: itemId,
-        },
-        data: {
-          position: index,
-        },
-      })
-    ),
-    prisma.trip.update({
+  const result = await prisma.$transaction(async (tx) => {
+    const updatedTrip = await tx.trip.updateMany({
       where: {
         id: tripId,
+        version,
       },
       data: {
         version: {
           increment: 1,
         },
       },
-    }),
-  ]);
+    });
+
+    if (updatedTrip.count === 0) {
+      return null;
+    }
+
+    await Promise.all(
+      itemIds.map((itemId, index) =>
+        tx.itineraryItem.update({
+          where: {
+            id: itemId,
+          },
+          data: {
+            position: index,
+          },
+        })
+      )
+    );
+
+    return true;
+  });
+
+  if (!result) {
+    const currentTrip = await prisma.trip.findUnique({
+      where: {
+        id: tripId,
+      },
+      select: {
+        version: true,
+      },
+    });
+
+    return {
+      conflict: true,
+      serverVersion: currentTrip?.version ?? null,
+    };
+  }
 
   return true;
 }

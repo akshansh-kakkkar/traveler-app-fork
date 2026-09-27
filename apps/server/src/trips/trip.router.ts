@@ -47,7 +47,7 @@ export const tripRouter = t.router({
           description: input.description,
           startDate: input.startDate?.toISOString() ?? null,
           endDate: input.endDate?.toISOString() ?? null,
-					version : input.version,
+          version: input.version,
         },
       });
     }),

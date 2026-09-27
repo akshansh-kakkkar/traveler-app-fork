@@ -85,3 +85,55 @@ export async function getTripMembersService({
 
   return members;
 }
+
+export async function removeTripMemberService({
+  userId,
+  tripId,
+  targetUserId,
+}: {
+  userId: string;
+  tripId: string;
+  targetUserId: string;
+}) {
+  const owner = await prisma.tripMember.findUnique({
+    where: {
+      tripId_userId: {
+        tripId,
+        userId,
+      },
+    },
+    select: {
+      role: true,
+    },
+  });
+
+  if (owner?.role !== "owner") {
+    return null;
+  }
+  if (userId === targetUserId) {
+    throw new Error("owner cannot remove themselves.");
+  }
+
+  const member = await prisma.tripMember.findUnique({
+    where: {
+      tripId_userId: {
+        tripId,
+        userId: targetUserId,
+      },
+    },
+  });
+
+  if (!member) {
+    return null;
+  }
+
+  await prisma.tripMember.delete({
+    where: {
+      tripId_userId: {
+        tripId,
+        userId: targetUserId,
+      },
+    },
+  });
+  return true;
+}

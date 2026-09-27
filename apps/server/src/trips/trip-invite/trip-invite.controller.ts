@@ -1,7 +1,7 @@
 import {
   acceptTripInviteService,
   deleteTripInviteService,
-	getTripInvitesService,
+  getTripInvitesService,
 } from "./trip-invite.service";
 
 export async function createTripInviteController({
@@ -40,16 +40,15 @@ export async function deleteTripInviteController({
   return deleteTripInviteService({ userId, token });
 }
 
-
 export async function getTripInvitesController({
-	userId,
-	tripId
-} : {
-	userId : string,
-	tripId : string,
-}){
-	return getTripInvitesService({
-		userId,
-		tripId,
-	})
+  userId,
+  tripId,
+}: {
+  userId: string;
+  tripId: string;
+}) {
+  return getTripInvitesService({
+    userId,
+    tripId,
+  });
 }

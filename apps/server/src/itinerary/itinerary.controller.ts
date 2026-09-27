@@ -60,9 +60,10 @@ export async function updateItineraryItemController({
     placeId?: string | null;
     startAt?: Date | null;
     endAt?: Date | null;
-		done? : boolean;
-		version : number;
-}}) {
+    done?: boolean;
+    version: number;
+  };
+}) {
   return updateItineraryItemService({ userId, itemId, data });
 }
 
@@ -80,20 +81,20 @@ export async function deleteItineraryItemController({
 }
 
 export async function reorderItineraryController({
-	userId,
-	tripId,
-	itemIds,
-	version,
-} : {
-	userId : string;
-	tripId : string;
-	itemIds : string[];
-	version : number;
-}){
-	return reorderItineraryItemsService({
-		userId,
-		tripId,
-		itemIds,
-		version,
-	})
+  userId,
+  tripId,
+  itemIds,
+  version,
+}: {
+  userId: string;
+  tripId: string;
+  itemIds: string[];
+  version: number;
+}) {
+  return reorderItineraryItemsService({
+    userId,
+    tripId,
+    itemIds,
+    version,
+  });
 }

@@ -1,5 +1,6 @@
 import {
   getTripMembersService,
+  removeTripMemberService,
   updateTripMemberRoleService,
 } from "./trip-member.service";
 
@@ -25,4 +26,20 @@ export async function getTripMemberController({
   tripId: string;
 }) {
   return getTripMembersService({ userId, tripId });
+}
+
+export async function removeTripMemberController({
+  userId,
+  tripId,
+  targetUserId,
+}: {
+  userId: string;
+  tripId: string;
+  targetUserId: string;
+}) {
+  return removeTripMemberService({
+    userId,
+    tripId,
+    targetUserId,
+  });
 }

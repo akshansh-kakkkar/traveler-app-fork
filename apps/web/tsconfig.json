@@ -11,7 +11,8 @@
 		"rootDirs": ["."],
 		"paths": {
 			"@/*": ["./src/*"],
-			"@traveler-app/ui/*": ["../../packages/ui/src/*"]
+			"@traveler-app/ui/*": ["../../packages/ui/src/*"],
+			"@server/*" : ["../server/src/"]
 		}
 	}
 }

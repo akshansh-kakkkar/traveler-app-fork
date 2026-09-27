@@ -144,9 +144,9 @@ export async function updateTripService({
 
   if (trip.version !== data.version) {
     return {
-			conflict : true,
-			serverVersion : trip.version
-		}
+      conflict: true,
+      serverVersion: trip.version,
+    };
   }
 
   const result = await prisma.trip.updateMany({
@@ -185,13 +185,12 @@ export async function updateTripService({
     };
   }
 
-	return prisma.trip.findUnique({
-		where : {
-			id : tripId
-		}
-	})
+  return prisma.trip.findUnique({
+    where: {
+      id: tripId,
+    },
+  });
 }
-
 
 export async function deleteTripService({
   userId,
