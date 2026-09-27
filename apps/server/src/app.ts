@@ -1,5 +1,5 @@
 import { createContext } from "@traveler-app/api/context";
-import { appRouter } from "@traveler-app/api/routers/index";
+import { appRouter } from "./router";
 import { auth } from "@traveler-app/auth";
 import { env } from "@traveler-app/env/server";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";

@@ -1,9 +1,9 @@
 import { QueryCache, QueryClient } from "@tanstack/react-query";
-import type { AppRouter } from "@traveler-app/api/routers/index";
 import { env } from "@traveler-app/env/web";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { toast } from "sonner";
+import type { AppRouter } from "../../../server/src/router";
 
 function getServerUrl(url: string) {
 	const processEnv = (
