@@ -37,9 +37,9 @@ export default function Home() {
 					<Text className="mb-4 text-muted text-sm">{session.user.email}</Text>
 					<Pressable
 						className="self-start rounded-lg bg-danger px-4 py-3 active:opacity-70"
-						onPress={() => {
-							authClient.signOut();
-							queryClient.invalidateQueries();
+						onPress={async () => {
+							await authClient.signOut();
+							queryClient.clear();
 						}}
 					>
 						<Text className="font-medium text-foreground">Sign Out</Text>
