@@ -110,27 +110,49 @@ export async function updateTripService({
     description?: string | null;
     startDate?: string | null;
     endDate?: string | null;
+    version: number;
   };
 }) {
-	const membership = await prisma.tripMember.findUnique({
-		where : {
-			tripId_userId : {
-				tripId,
-				userId,
-			},
-		},
-		select : {
-			role : true
-		}
-	})
+  const membership = await prisma.tripMember.findUnique({
+    where: {
+      tripId_userId: {
+        tripId,
+        userId,
+      },
+    },
+    select: {
+      role: true,
+    },
+  });
 
-	if(!membership || !canEditTrip(membership.role)){
-		return null;
-	}
+  if (!membership || !canEditTrip(membership.role)) {
+    return null;
+  }
 
-  const updatedTrip = await prisma.trip.update({
+  const trip = await prisma.trip.findUnique({
     where: {
       id: tripId,
+    },
+    select: {
+      version: true,
+    },
+  });
+
+  if (!trip) {
+    return null;
+  }
+
+  if (trip.version !== data.version) {
+    return {
+			conflict : true,
+			serverVersion : trip.version
+		}
+  }
+
+  const result = await prisma.trip.updateMany({
+    where: {
+      id: tripId,
+      version: data.version,
     },
     data: {
       name: data.name,
@@ -145,11 +167,31 @@ export async function updateTripService({
         : data.endDate === null
         ? null
         : undefined,
+
+      version: {
+        increment: 1,
+      },
     },
   });
 
-  return updatedTrip;
+  if (result.count === 0) {
+    const currentTrip = await prisma.trip.findUnique({
+      where: { id: tripId },
+    });
+
+    return {
+      conflict: true,
+      serverVersion: currentTrip?.version ?? null,
+    };
+  }
+
+	return prisma.trip.findUnique({
+		where : {
+			id : tripId
+		}
+	})
 }
+
 
 export async function deleteTripService({
   userId,
@@ -160,21 +202,20 @@ export async function deleteTripService({
 }) {
   const membership = await prisma.tripMember.findUnique({
     where: {
-			tripId_userId : {
-				tripId,
-				userId,
-			}
-    }, 
-		select : {
-			role : true,
-		}
+      tripId_userId: {
+        tripId,
+        userId,
+      },
+    },
+    select: {
+      role: true,
+    },
   });
 
   if (!membership || !canDeleteTrip(membership.role)) {
     return null;
   }
 
-	
   const deletedTrip = await prisma.trip.delete({
     where: {
       id: tripId,
@@ -184,46 +225,48 @@ export async function deleteTripService({
   return deletedTrip;
 }
 
-
-
-export async function reorderTripsService({userId, tripIds} : {
-	userId : string;
-	tripIds : string[],
+export async function reorderTripsService({
+  userId,
+  tripIds,
+}: {
+  userId: string;
+  tripIds: string[];
 }) {
-	const memberships = await prisma.tripMember.findMany({
-		where : {
-			userId,
-			tripId : {
-				in : tripIds,
-			},
-		},
-		select : {
-			tripId : true,
-		},
-	});
+  const memberships = await prisma.tripMember.findMany({
+    where: {
+      userId,
+      tripId: {
+        in: tripIds,
+      },
+    },
+    select: {
+      tripId: true,
+    },
+  });
 
-	const userTripIds = new Set(
-		memberships.map((membership)=> membership.tripId),
-	);
+  const userTripIds = new Set(
+    memberships.map((membership) => membership.tripId)
+  );
 
-	if(userTripIds.size !== tripIds.length) {
-		throw new Error("Invalid trip list");
-	}
+  if (userTripIds.size !== tripIds.length) {
+    throw new Error("Invalid trip list");
+  }
 
-	await prisma.$transaction(
-		tripIds.map((tripId, index)=>
-		prisma.tripMember.update({
-			where : {
-				tripId_userId : {
-					tripId,
-					userId,
-				},
-			},
-			data : {
-				position : index,
-			}
-		}))
-	)
+  await prisma.$transaction(
+    tripIds.map((tripId, index) =>
+      prisma.tripMember.update({
+        where: {
+          tripId_userId: {
+            tripId,
+            userId,
+          },
+        },
+        data: {
+          position: index,
+        },
+      })
+    )
+  );
 
-	return true;
+  return true;
 }

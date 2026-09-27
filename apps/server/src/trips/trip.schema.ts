@@ -13,6 +13,7 @@ export const updateTripSchema = z.object({
     description : z.string().trim().max(1000).nullable().optional(),
     startDate : z.coerce.date().nullable().optional(),
     endDate : z.coerce.date().nullable().optional(),
+		version : z.number().int().positive(),
 })
 
 export const tripIdSchema = z.object({
@@ -22,3 +23,4 @@ export const tripIdSchema = z.object({
 export const reorderTripsSchema = z.object({
 	tripIds : z.array(z.string().min(1)).min(1)
 })
+

@@ -53,22 +53,28 @@ export const itineraryRouter = t.router({
           notes: input.notes,
           endAt: input.endAt,
           startAt: input.startAt,
-					done : input.done,
+          done: input.done,
+          version: input.version,
         },
       });
     }),
-		delete : protectedProcedure.input(ItineraryItemIdSchema).mutation(async ({input, ctx})=> {
-			return deleteItineraryItemController({
-				userId : ctx.user.id,
-				itemId : input.id,
-			});
-		}),
+  delete: protectedProcedure
+    .input(ItineraryItemIdSchema)
+    .mutation(async ({ input, ctx }) => {
+      return deleteItineraryItemController({
+        userId: ctx.user.id,
+        itemId: input.id,
+      });
+    }),
 
-		reorder : protectedProcedure.input(reorderItineraryItemsSchema).mutation(async ({input, ctx})=> {
-			return reorderItineraryController({
-				userId : ctx.user.id,
-				tripId : input.tripId,
-				itemIds : input.itemIds
-			})
-		})
+  reorder: protectedProcedure
+    .input(reorderItineraryItemsSchema)
+    .mutation(async ({ input, ctx }) => {
+      return reorderItineraryController({
+        userId: ctx.user.id,
+        tripId: input.tripId,
+        itemIds: input.itemIds,
+        version: input.version,
+      });
+    }),
 });

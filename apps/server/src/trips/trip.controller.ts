@@ -21,11 +21,13 @@ export async function getTripController({ userId, tripId }: { userId: string, tr
 }
 
 export async function updateTripController({ userId, tripId, data }: {
-    userId: string, tripId: string, data: {
+    userId: string, tripId: string, 
+		data: {
         name?: string,
         description?: string | null,
         startDate?: string | null,
         endDate?: string | null,
+				version : number
     }
 }) {
     return updateTripService({ userId, tripId, data })
