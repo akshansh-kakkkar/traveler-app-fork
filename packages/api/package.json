@@ -9,7 +9,9 @@
 			"default": "./src/*.ts"
 		}
 	},
-	"scripts": {},
+	"scripts": {
+		"classify": "bun --env-file=../../apps/server/.env scripts/classify-places.ts"
+	},
 	"dependencies": {
 		"@traveler-app/auth": "workspace:*",
 		"@traveler-app/db": "workspace:*",
