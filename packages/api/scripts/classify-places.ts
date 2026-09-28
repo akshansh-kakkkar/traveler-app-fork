@@ -3,16 +3,21 @@ import z from "zod";
 import { callGroq } from "../src/lib/groq";
 
 const BATCH_SIZE = 25;
-const BATCH_DELAY_MS = 500;
+const BATCH_DELAY_MS = 32000;
 
 const dryRun = process.argv.includes("--dry-run");
 const sample = process.argv.includes("--sample");
+const includeUnscored = process.argv.includes("--all");
 
 const limitArg = process.argv.find((a) => a.startsWith("--limit="));
 const limit = limitArg ? Number(limitArg.split("=")[1]) : undefined;
 
 const places = await prisma.place.findMany({
-  where: { cityId: "kl", aiLabel: null },
+  where: {
+    cityId: "kl",
+    aiLabel: null,
+    ...(includeUnscored ? {} : { score: { gt: 0 } }),
+  },
   orderBy: sample ? { id: "asc" } : { score: "desc" },
   skip: sample ? Math.floor(Math.random() * 3000) : undefined,
   take: limit,
