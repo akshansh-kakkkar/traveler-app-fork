@@ -1,7 +1,9 @@
 import { protectedProcedure, publicProcedure, router } from "../index";
-import { itineraryRouter } from "./itinerary";
+import { itineraryRouter } from "../itinerary/itinerary.router";
+import { tripRouter } from "../trips/trip.router";
+import { tripInviteRouter } from "../trips/trip-invite/trip-invite.router";
+import { tripMemberRouter } from "../trips/trip-member/trip-member.router";
 import { placeRouter } from "./place";
-import { tripRouter } from "./trip";
 
 export const appRouter = router({
 	healthCheck: publicProcedure.query(() => {
@@ -13,8 +15,10 @@ export const appRouter = router({
 			user: ctx.session.user,
 		};
 	}),
-	trip: tripRouter,
 	place: placeRouter,
+	trips: tripRouter,
+	members: tripMemberRouter,
+	invites: tripInviteRouter,
 	itinerary: itineraryRouter,
 });
 export type AppRouter = typeof appRouter;

@@ -3,7 +3,7 @@ import { env } from "@traveler-app/env/web";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { toast } from "sonner";
-import type { AppRouter } from "../../../server/src/router";
+import type { AppRouter } from "@traveler-app/api/routers/index";
 
 function getServerUrl(url: string) {
 	const processEnv = (
