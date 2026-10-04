@@ -4,6 +4,7 @@ import HeroSeciton from "@/components/marketing/HeroSection";
 import CategorySection from "@/components/marketing/CategorySection";
 import AboutUs from "@/components/marketing/AboutUs";
 import HeroBanner from "@/components/marketing/Hero-Banner";
+import LibertyBanner from "@/components/marketing/Liberty-banner";
 
 export const Route = createFileRoute("/_marketing/")({
 	component: LandingPage
@@ -20,6 +21,7 @@ function LandingPage() {
 		<CategorySection />
 		<AboutUs />
 		<HeroBanner />
+		<LibertyBanner />
 		</>
 	);
 }
