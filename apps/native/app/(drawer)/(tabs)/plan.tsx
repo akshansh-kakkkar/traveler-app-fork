@@ -3,13 +3,17 @@ import type { AppRouter } from "@traveler-app/api/routers/index";
 import { PlaceCategory } from "@traveler-app/db/enums";
 import type { inferRouterOutputs } from "@trpc/server";
 import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import {
+	ActivityIndicator,
+	FlatList,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { Container } from "@/components/container";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
-
-type GeneratedTrip = inferRouterOutputs<AppRouter>["itinerary"]["generate"];
 
 export default function Plan() {
 	const [interests, setInterests] = useState<PlaceCategory[]>([
@@ -19,12 +23,25 @@ export default function Plan() {
 	const [days, setDays] = useState(3);
 	const [pace, setPace] = useState<"relaxed" | "normal" | "packed">("normal");
 	const [activeDay, setActiveDay] = useState(0);
-
-	const allCategories = Object.values(PlaceCategory);
+	const [notes, setNotes] = useState("");
+	const [messageIndex, setMessageIndex] = useState(0);
 
 	const generateMutation = useMutation(
 		trpc.itinerary.generate.mutationOptions(),
 	);
+
+	const isPending = generateMutation.isPending;
+	const canGenerate = interests.length > 0 && !isPending;
+
+	const MESSAGES = [
+		"Finding places in Kuala Lumpur…",
+		"Checking opening hours…",
+		"Planning your days…",
+		"Ordering stops to cut travel…",
+		"Almost there…",
+	];
+
+	const allCategories = Object.values(PlaceCategory);
 
 	function toggleInterest(category: PlaceCategory) {
 		setInterests((prev) =>
@@ -58,29 +75,40 @@ export default function Plan() {
 		generateMutation.reset();
 	}, [userId]);
 
+	useEffect(() => {
+		if (!generateMutation.isPending) {
+			setMessageIndex(0);
+			return;
+		}
+		const timer = setInterval(() => {
+			setMessageIndex((i) => Math.min(i + 1, MESSAGES.length - 1));
+		}, 2000);
+
+		return () => clearInterval(timer);
+	}, [generateMutation.isPending]);
+
 	// run this from a button press
 	// generateMutation.mutate({ cityId: "kl", interests, days, pace });
 
 	return (
 		<Container className="p-6">
 			<Text className="mb-4 text-center text-lg">
-				Itinerary for {days} days in Kuala Lumpur
+				{days} days in Kuala Lumpur ·{" "}
+				{interests.join(", ") || "pick an interest"}
 			</Text>
 
-			<FlatList
-				data={allCategories}
-				keyExtractor={(item) => item}
-				horizontal={true}
-				showsHorizontalScrollIndicator={false}
-				contentContainerClassName="gap-2 pb-2"
-				renderItem={({ item }) => (
+			<Text className="mb-2 text-gray-500 text-sm">Interests</Text>
+			<View className="mb-4 flex-row flex-wrap gap-2">
+				{allCategories.map((item) => (
 					<InterestChip
+						key={item}
 						category={item}
 						isSelected={interests.includes(item)}
+						disabled={isPending}
 						onPress={() => toggleInterest(item)}
 					/>
-				)}
-			/>
+				))}
+			</View>
 
 			<View className="mb-4 flex-row items-center justify-center gap-6">
 				<TouchableOpacity
@@ -100,9 +128,34 @@ export default function Plan() {
 				</TouchableOpacity>
 			</View>
 
+			<Text className="mb-2 text-gray-500 text-sm">Pace</Text>
+			<View className="mb-4 flex-row justify-center gap-2">
+				{(["relaxed", "normal", "packed"] as const).map((p) => (
+					<DayChip
+						key={p}
+						label={p}
+						isSelected={pace === p}
+						disabled={isPending}
+						onPress={() => setPace(p)}
+					/>
+				))}
+			</View>
+
+			<TextInput
+				className="mb-4 rounded-xl border border-gray-300 p-4"
+				placeholder="Anything specific? e.g. mostly food, no temples"
+				value={notes}
+				onChangeText={setNotes}
+				editable={!isPending}
+				multiline
+				maxLength={500}
+			/>
+
 			<TouchableOpacity
-				className="mb-4 items-center rounded-xl bg-amber-400 p-4"
-				disabled={interests.length === 0 || generateMutation.isPending}
+				className={`mb-4 items-center rounded-xl p-4 ${
+					canGenerate ? "bg-amber-400" : "bg-gray-300"
+				}`}
+				disabled={!canGenerate}
 				onPress={() =>
 					generateMutation.mutate({
 						cityId: "kl",
@@ -110,24 +163,21 @@ export default function Plan() {
 						days,
 						pace,
 						startDate: new Date().toISOString(),
+						notes: notes.trim() || undefined,
 					})
 				}
 			>
-				<Text className="font-semibold text-lg">Generate</Text>
+				<Text className="font-semibold text-lg">
+					{isPending ? "Generating…" : "Generate"}
+				</Text>
 			</TouchableOpacity>
 
-			<View className="mb-4 flex-row justify-center gap-2">
-				{(["relaxed", "normal", "packed"] as const).map((p) => (
-					<DayChip
-						key={p}
-						label={p}
-						isSelected={pace === p}
-						onPress={() => setPace(p)}
-					/>
-				))}
-			</View>
-
-			{generateMutation.isPending && <ActivityIndicator />}
+			{generateMutation.isPending && (
+				<View className="items-center py-8">
+					<ActivityIndicator />
+					<Text className="mt-3 text-gray-600">{MESSAGES[messageIndex]}</Text>
+				</View>
+			)}
 
 			{generateMutation.error && (
 				<Text className="text-red-500">{generateMutation.error.message}</Text>
@@ -171,15 +221,18 @@ export default function Plan() {
 function DayChip({
 	label,
 	isSelected,
+	disabled,
 	onPress,
 }: {
 	label: string;
 	isSelected: boolean;
+	disabled?: boolean;
 	onPress: () => void;
 }) {
 	return (
 		<TouchableOpacity
 			className={`self-start rounded-full border px-4 py-2 ${isSelected ? "border-amber-400 bg-amber-100" : "border-gray-300"}`}
+			disabled={disabled}
 			onPress={onPress}
 		>
 			<Text className="font-medium">{label}</Text>
@@ -190,15 +243,20 @@ function DayChip({
 function InterestChip({
 	category,
 	isSelected,
+	disabled,
 	onPress,
 }: {
 	category: PlaceCategory;
 	isSelected: boolean;
+	disabled?: boolean;
 	onPress: () => void;
 }) {
 	return (
 		<TouchableOpacity
-			className={`self-start rounded-full border px-4 py-2 ${isSelected ? "border-amber-400 bg-amber-100" : "border-gray-300"}`}
+			disabled={disabled}
+			className={`self-start rounded-full border px-4 py-2 ${
+				isSelected ? "border-amber-400 bg-amber-100" : "border-gray-300"
+			} ${disabled ? "opacity-40" : ""}`}
 			onPress={onPress}
 		>
 			<Text className="font-medium capitalize">{category}</Text>

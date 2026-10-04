@@ -8,9 +8,9 @@ export type TripPrefs = {
 };
 
 const ITEMS_PER_DAY = {
-	relaxed: 3,
-	normal: 4,
-	packed: 6,
+	relaxed: 4,
+	normal: 5,
+	packed: 7,
 } as const;
 
 function placeLine(place: Place): string {
@@ -36,6 +36,8 @@ RULES
 - ${perDay} items per day
 - Order each day so nearby places are visited together; avoid crossing the city twice
 - Include a food place around 12:30 and around 19:00 each day
+- Fill the afternoon: at least one non-food item starting between 14:00 and 17:00
+- Leave no gap longer than 2 hours between items
 - Respect opening hours when they are given. "hours:?" means unknown: assume open
 - Start each day at 09:00. Times are 24-hour "HH:MM
 - durationMin: 45 for food, 60-120 for attractions, museums and parks
