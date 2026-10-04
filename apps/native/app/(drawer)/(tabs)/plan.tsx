@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { AppRouter } from "@traveler-app/api/routers/index";
 import { PlaceCategory } from "@traveler-app/db/enums";
 import type { inferRouterOutputs } from "@trpc/server";
+import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
 	ActivityIndicator,
@@ -13,7 +14,7 @@ import {
 } from "react-native";
 import { Container } from "@/components/container";
 import { authClient } from "@/lib/auth-client";
-import { trpc } from "@/utils/trpc";
+import { queryClient, trpc } from "@/utils/trpc";
 
 export default function Plan() {
 	const [interests, setInterests] = useState<PlaceCategory[]>([
@@ -27,7 +28,12 @@ export default function Plan() {
 	const [messageIndex, setMessageIndex] = useState(0);
 
 	const generateMutation = useMutation(
-		trpc.itinerary.generate.mutationOptions(),
+		trpc.itinerary.generate.mutationOptions({
+			onSuccess: (trip) => {
+				queryClient.invalidateQueries(trpc.trips.getAll.queryFilter());
+				router.push(`../trip/${trip.id}`);
+			},
+		}),
 	);
 
 	const isPending = generateMutation.isPending;
