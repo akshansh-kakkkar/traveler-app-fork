@@ -17,7 +17,7 @@ export const tripInviteRouter = t.router({
 	create: protectedProcedure
 		.input(createTripInviteSchema)
 		.mutation(({ ctx, input }) => {
-			createTripInviteController({
+			return createTripInviteController({
 				userId: ctx.session.user.id,
 				tripId: input.tripId,
 				expiresAt: input.expiresAt,
@@ -27,7 +27,7 @@ export const tripInviteRouter = t.router({
 	accept: protectedProcedure
 		.input(acceptTripInviteSchema)
 		.mutation(({ ctx, input }) => {
-			acceptTripInviteController({
+			return acceptTripInviteController({
 				userId: ctx.session.user.id,
 				token: input.token,
 			});
@@ -35,7 +35,7 @@ export const tripInviteRouter = t.router({
 	delete: protectedProcedure
 		.input(deleteTripInviteSchema)
 		.mutation(({ ctx, input }) => {
-			deleteTripInviteController({
+			return deleteTripInviteController({
 				userId: ctx.session.user.id,
 				token: input.token,
 			});
@@ -43,7 +43,7 @@ export const tripInviteRouter = t.router({
 	getAll: protectedProcedure
 		.input(getTripInviteSchema)
 		.query(({ ctx, input }) => {
-			getTripInvitesController({
+			return getTripInvitesController({
 				userId: ctx.session.user.id,
 				tripId: input.tripId,
 			});

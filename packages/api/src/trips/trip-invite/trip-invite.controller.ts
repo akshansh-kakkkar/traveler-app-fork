@@ -1,5 +1,6 @@
 import {
 	acceptTripInviteService,
+	createTripInviteService,
 	deleteTripInviteService,
 	getTripInvitesService,
 } from "./trip-invite.service";
@@ -13,7 +14,7 @@ export async function createTripInviteController({
 	tripId: string;
 	expiresAt?: Date;
 }) {
-	return createTripInviteController({
+	return createTripInviteService({
 		userId,
 		tripId,
 		expiresAt,
