@@ -31,8 +31,8 @@ const cards = [
 export default function CategorySection() {
   return (
 		<div className="h-[60vh]">
-			<div className="flex flex-col gap-2 justify-center items-center w-full py-4	 ">
-				<p className="text-[#DF6951] text-sm">CATEGORY</p>
+			<div className="flex flex-col justify-center items-center w-full py-4	 ">
+				<p className="text-[#DF6951] font-black text-sm">CATEGORY</p>
 				<h1 className="text-4xl font-volkhov font-bold text-[#181E4B]">We Offer Best Services</h1>
 			</div>
     <div className="grid grid-cols-4 place-items-center">
