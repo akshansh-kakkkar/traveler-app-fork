@@ -24,17 +24,19 @@ export async function generateItinerary(input: {
 	pace?: TripPrefs["pace"];
 	notes?: string;
 }): Promise<GeneratedItinerary> {
-	const candidates = await pickCandidates({
+	const candidatesByDay = await pickCandidates({
 		cityId: input.cityId,
 		interests: input.interests,
 		days: input.days,
 	});
+	const byDay = candidatesByDay.map(
+		(places) => new Map(places.map((p) => [p.id, p])),
+	);
 
-	if (candidates.length === 0) {
-		throw new Error(`No candidate places for ${input.cityId}`);
+	if (candidatesByDay.every((day) => day.length === 0)) {
+		throw new Error(`No candidate places for city: ${input.cityId}`);
 	}
 
-	const byId = new Map(candidates.map((place) => [place.id, place]));
 	const prefs: TripPrefs = {
 		days: input.days,
 		interests: input.interests,
@@ -48,8 +50,8 @@ export async function generateItinerary(input: {
 	for (let attempt = 1; attempt <= 2; attempt++) {
 		const prompt =
 			attempt === 1
-				? buildPrompt(prefs, candidates)
-				: `${buildPrompt(prefs, candidates)}
+				? buildPrompt(prefs, candidatesByDay)
+				: `${buildPrompt(prefs, candidatesByDay)}
 
 Your previous reply was rejected: ${lastError}
 Return ONLY valid JSON in the required shape using placeIds copied exactly from the PLACES list`;
@@ -71,7 +73,7 @@ Return ONLY valid JSON in the required shape using placeIds copied exactly from 
 			continue;
 		}
 
-		const { days, dropped, kept } = hydrate(result.data, byId);
+		const { days, dropped, kept } = hydrate(result.data, byDay);
 
 		// If the model invented most of its ids the reply is not usable
 		if (kept === 0 || dropped > kept) {
@@ -106,7 +108,7 @@ function hydrate(
 			}[];
 		}[];
 	},
-	byId: Map<string, Place>,
+	byDay: Map<string, Place>[],
 ) {
 	let dropped = 0;
 	let kept = 0;
@@ -114,9 +116,11 @@ function hydrate(
 
 	const days = itinerary.days.map((day) => {
 		const items: GeneratedItem[] = [];
+		// Each day may only use places from its own area.
+		const dayPlaces = byDay[day.day - 1];
 
 		for (const item of day.items) {
-			const place = byId.get(item.placeId);
+			const place = dayPlaces?.get(item.placeId);
 			if (!place || used.has(item.placeId)) {
 				dropped++;
 				continue;
