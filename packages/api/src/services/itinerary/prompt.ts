@@ -23,8 +23,20 @@ function placeLine(place: Place): string {
 	].join(" | ");
 }
 
-export function buildPrompt(prefs: TripPrefs, candidates: Place[]): string {
+export function buildPrompt(
+	prefs: TripPrefs,
+	candidatesByDay: Place[][],
+): string {
 	const perDay = ITEMS_PER_DAY[prefs.pace ?? "normal"];
+
+	const placesBlock = candidatesByDay
+		.map(
+			(places, index) =>
+				`AREA ${index + 1} (use these for day ${index + 1}):\n${places
+					.map(placeLine)
+					.join("\n")}`,
+		)
+		.join("\n\n");
 
 	return `You are a Kuala Lumpur travel planner.
 
@@ -34,12 +46,12 @@ RULES
 - Use each place at most once across the whole trip
 - Every placeId MUST be copied exactly from the PLACES list. Never invent one
 - ${perDay} items per day
-- Order each day so nearby places are visited together; avoid crossing the city twice
+- Day N must use ONLY the places listed under AREA N
 - Include a food place around 12:30 and around 19:00 each day
 - Fill the afternoon: at least one non-food item starting between 14:00 and 17:00
 - Leave no gap longer than 2 hours between items
 - Respect opening hours when they are given. "hours:?" means unknown: assume open
-- Start each day at 09:00. Times are 24-hour "HH:MM
+- Start each day at 09:00. Times are 24-hour "HH:MM"
 - durationMin: 45 for food, 60-120 for attractions, museums and parks
 - reason: one short sentence on why this place fits here
 
@@ -49,7 +61,7 @@ TRAVELLER
 ${prefs.notes ? `- Notes: ${prefs.notes}` : ""}
 
 PLACES (id | name | category | indoor | opening hours)
-${candidates.map(placeLine).join("\n")}
+${placesBlock}
 
 Reply with JSON in exactly this shape, and nothing else:
 {
