@@ -1,7 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import type { AppRouter } from "@traveler-app/api/routers/index";
 import { PlaceCategory } from "@traveler-app/db/enums";
-import type { inferRouterOutputs } from "@trpc/server";
 import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -49,14 +47,6 @@ export default function Plan() {
 
 	const allCategories = Object.values(PlaceCategory);
 
-	function toggleInterest(category: PlaceCategory) {
-		setInterests((prev) =>
-			prev.includes(category)
-				? prev.filter((c) => c !== category)
-				: [...prev, category],
-		);
-	}
-
 	const sections = useMemo(() => {
 		if (!generateMutation.data) return [];
 
@@ -93,8 +83,13 @@ export default function Plan() {
 		return () => clearInterval(timer);
 	}, [generateMutation.isPending]);
 
-	// run this from a button press
-	// generateMutation.mutate({ cityId: "kl", interests, days, pace });
+	function toggleInterest(category: PlaceCategory) {
+		setInterests((prev) =>
+			prev.includes(category)
+				? prev.filter((c) => c !== category)
+				: [...prev, category],
+		);
+	}
 
 	return (
 		<Container className="p-6">

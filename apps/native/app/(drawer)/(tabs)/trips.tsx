@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import {
 	ActivityIndicator,
+	Alert,
 	FlatList,
 	Text,
 	TouchableOpacity,
@@ -16,6 +17,7 @@ export default function Trips() {
 		trpc.trips.delete.mutationOptions({
 			onSuccess: () => {
 				queryClient.invalidateQueries(trpc.trips.getAll.queryFilter());
+				router.back();
 			},
 		}),
 	);
