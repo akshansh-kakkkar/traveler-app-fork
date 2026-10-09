@@ -1,7 +1,7 @@
 export default function AboutUs() {
   return (
-    <div className="flex gap-6 mx-32 mt-12 h-screen justify-center items-center">
-      <div className="w-1/2">
+    <div className="flex lg:flex-row items-center justify-center text-center flex-col gap-6 lg:mx-32 mt-12 lg:h-screen lg:text-start lg:justify-center lg:items-center">
+      <div className="lg:w-1/2">
 				<img
           src="/honeymoon.png"
           alt="honeymoon"
@@ -10,7 +10,7 @@ export default function AboutUs() {
 					className="border-4 border-[#DF6951] rounded-t-full"
         />
       </div>
-      <div className="text-black w-1/2 flex flex-col gap-4">
+      <div className="text-black lg:w-1/2 flex flex-col gap-4">
         <div className="text-md uppercase text-[#DF6951] font-bold">
           Honeymoon specials
         </div>
@@ -25,7 +25,7 @@ export default function AboutUs() {
           enjoy intimate candlelit dinners at sidewalk cafes that make every
           moment feel timeless.
         </div>
-        <div className="bg-[#DF6951] text-white py-4 px-4 w-40 text-center text-lg justify-center flex rounded-xl">
+        <div className="bg-[#DF6951] text-white py-4 px-4 lg:w-40 text-center text-lg justify-center flex rounded-xl">
           View Packages
         </div>
       </div>

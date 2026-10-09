@@ -26,7 +26,7 @@ const keyPoints = [
 ]
 export default function HeroBanner(){
 	return(
-		<div className="h-[70vh] flex justify-center items-center text-center gap-12">
+		<div className="lg:h-[70vh] lg:my-0 my-12 lg:flex-row flex-col flex justify-center items-center text-center gap-12">
 			<div>
 				<div className="flex flex-col  text-start  ml-12">
 					<div className="text-[#DF6951] font-bold">Fast & Easy</div>

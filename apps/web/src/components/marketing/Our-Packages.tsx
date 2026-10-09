@@ -43,16 +43,16 @@ const cards = [
 ];
 export default function OurPackages() {
   return (
-    <div className="flex flex-col gap-4 h-screen">
+    <div className="flex flex-col gap-4 lg:my-5 xl:h-screen">
       <div className="flex flex-col my-12 justify-center items-center text-center">
         <div className="uppercase font-bold text-[#DF6951]">Trendy</div>
         <div className="font-volkhov text-6xl leading-14 w-125 font-semibold text-[#181E4B]">
           Our Trending Tour Packages
         </div>
       </div>
-      <div className="grid grid-cols-3 place-items-center justify-center text-card items-center">
+      <div className="md:grid md:grid-cols-3 flex flex-col  gap-12 place-items-center justify-center text-card items-center">
         {cards.map((card) => (
-          <div key={card.id} className="w-[450px] h-[510px] rounded-2xl shadow">
+          <div key={card.id} className="xl:w-[450px] xl:h-[510px] md:w-[350px] w-[400px] h-[550px] rounded-2xl shadow-sm">
             <div className="relative">
               <img
                 src={card.image}
@@ -106,7 +106,7 @@ export default function OurPackages() {
                 $ {card.fees}
               </div>
             </div>
-            <div className="text-xs my-2 mx-4 h-[80px] leading-5">
+            <div className="text-xs my-2 mx-4 md:h-[120px] xl:h-[80px] leading-5">
               {card.description}
             </div>
             <div className="mx-4 bg-[#DF6951] w-fit px-4 py-2 rounded-xl text-white font-bold  shadow-[#DF695126]">

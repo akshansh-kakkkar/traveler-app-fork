@@ -9,27 +9,28 @@ import Promotion from "@/components/marketing/Promotion";
 import PromotionBanner from "@/components/marketing/Promotion-Banner";
 import OurPackages from "@/components/marketing/Our-Packages";
 import BannerPromo from "@/components/marketing/Banner-promo";
+import Footer from "@/components/marketing/Footer";
 
 export const Route = createFileRoute("/_marketing/")({
-	component: LandingPage
+  component: LandingPage,
 });
 
 function LandingPage() {
-
-	return (
-		<>
-		<div className="relative">
-		<Navbar />
-		<HeroSeciton />
-		</div>
-		<CategorySection />
-		<AboutUs />
-		<HeroBanner />
-		<LibertyBanner />
-		<Promotion />
-		<PromotionBanner />
-		<OurPackages />
-		<BannerPromo />
-		</>
-	);
+  return (
+    <>
+      <div className="relative">
+        <Navbar />
+        <HeroSeciton />
+      </div>
+      <CategorySection />
+      <AboutUs />
+      <HeroBanner />
+      <LibertyBanner />
+      <Promotion />
+      <PromotionBanner />
+      <OurPackages />
+      <BannerPromo />
+      <Footer />
+    </>
+  );
 }

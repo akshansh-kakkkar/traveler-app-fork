@@ -30,12 +30,12 @@ const cards = [
 ];
 export default function CategorySection() {
   return (
-		<div className="h-[60vh]">
+		<div className="lg:h-[60vh] mt-12">
 			<div className="flex flex-col justify-center items-center w-full py-4	 ">
 				<p className="text-[#DF6951] font-black text-sm">CATEGORY</p>
 				<h1 className="text-4xl font-volkhov font-bold text-[#181E4B]">We Offer Best Services</h1>
 			</div>
-    <div className="grid grid-cols-4 place-items-center">
+    <div className="sm:grid-cols-2 gap-4 grid lg:grid-cols-4 place-items-center">
 			{cards.map((card) => (
         <div
           key={card.id}
