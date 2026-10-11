@@ -92,7 +92,7 @@ export default function Plan() {
 	}
 
 	return (
-		<Container className="p-6">
+		<Container className="p-6" isScrollable={false}>
 			<Text className="mb-4 text-center text-lg">
 				{days} days in Kuala Lumpur ·{" "}
 				{interests.join(", ") || "pick an interest"}

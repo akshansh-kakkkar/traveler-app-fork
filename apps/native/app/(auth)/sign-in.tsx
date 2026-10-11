@@ -1,15 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
+import { router } from "expo-router";
 import { Card, Chip, useThemeColor } from "heroui-native";
-import { Pressable, Text, View } from "react-native";
-
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { Container } from "@/components/container";
 import { SignIn } from "@/components/sign-in";
-import { SignUp } from "@/components/sign-up";
 import { authClient } from "@/lib/auth-client";
 import { queryClient, trpc } from "@/utils/trpc";
 
-export default function Home() {
+export default function Signin() {
 	const healthCheck = useQuery(trpc.healthCheck.queryOptions());
 	const privateData = useQuery(trpc.privateData.queryOptions());
 	const isConnected = healthCheck?.data === "OK";
@@ -19,16 +18,9 @@ export default function Home() {
 	const mutedColor = useThemeColor("muted");
 	const successColor = useThemeColor("success");
 	const dangerColor = useThemeColor("danger");
-	const foregroundColor = useThemeColor("foreground");
 
 	return (
 		<Container className="p-6">
-			<View className="mb-6 py-4">
-				<Text className="mb-2 font-bold text-4xl text-foreground">
-					BETTER T STACK
-				</Text>
-			</View>
-
 			{session?.user ? (
 				<Card variant="secondary" className="mb-6 p-4">
 					<Text className="mb-2 text-base text-foreground">
@@ -100,12 +92,20 @@ export default function Home() {
 				)}
 			</Card>
 
-			{!session?.user && (
-				<>
-					<SignIn />
-					<SignUp />
-				</>
-			)}
+			{!session?.user && <SignIn />}
+
+			<TouchableOpacity onPress={() => router.push("/sign-up")}>
+				<Text className="m-5 self-center text-blue-600">Sign up</Text>
+			</TouchableOpacity>
+
+			<TouchableOpacity
+				onPress={() => {
+					if (router.canDismiss()) router.dismiss();
+					else router.replace("/home");
+				}}
+			>
+				<Text className="m-5 self-center">Close</Text>
+			</TouchableOpacity>
 		</Container>
 	);
 }

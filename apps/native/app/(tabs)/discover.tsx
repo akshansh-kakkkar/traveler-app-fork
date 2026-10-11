@@ -34,7 +34,7 @@ export default function Discover() {
 	);
 
 	return (
-		<Container className="p-6">
+		<Container className="p-6" isScrollable={false}>
 			<Text className="mb-4 text-center text-lg">
 				{allPlaces.length} places in Kuala Lumpur
 			</Text>

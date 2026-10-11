@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form";
+import { router } from "expo-router";
 import {
 	Button,
 	FieldError,
@@ -12,7 +13,6 @@ import {
 import { useRef } from "react";
 import { Text, type TextInput, View } from "react-native";
 import z from "zod";
-
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/utils/trpc";
 
@@ -95,6 +95,7 @@ export function SignUp() {
 							label: "Account created successfully",
 						});
 						queryClient.refetchQueries();
+						router.dismiss();
 					},
 				},
 			);

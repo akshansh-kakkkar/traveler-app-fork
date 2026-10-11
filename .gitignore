@@ -56,3 +56,9 @@ coverage
 .cache
 tmp
 temp
+packages/db/scripts/tests
+
+# Design
+design
+DESIGN.md
+packages/api/scratch.ts

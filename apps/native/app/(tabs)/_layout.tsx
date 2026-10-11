@@ -1,10 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { useThemeColor } from "heroui-native";
+import { ActivityIndicator } from "react-native";
+import { authClient } from "@/lib/auth-client";
 
 export default function TabLayout() {
 	const themeColorForeground = useThemeColor("foreground");
 	const themeColorBackground = useThemeColor("background");
+
+	const { data: session, isPending } = authClient.useSession();
+	if (isPending) return <ActivityIndicator />;
+	if (!session) return <Redirect href="/(auth)/sign-in" />;
 
 	return (
 		<Tabs
@@ -24,7 +30,7 @@ export default function TabLayout() {
 			}}
 		>
 			<Tabs.Screen
-				name="index"
+				name="home"
 				options={{
 					title: "Home",
 					tabBarIcon: ({ color, size }) => (
@@ -33,7 +39,7 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="two"
+				name="discover"
 				options={{
 					title: "Discover",
 					tabBarIcon: ({ color, size }) => (
