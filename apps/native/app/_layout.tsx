@@ -8,16 +8,20 @@ import { AppThemeProvider } from "@/contexts/app-theme-context";
 import { queryClient } from "@/utils/trpc";
 
 export const unstable_settings = {
-	initialRouteName: "(drawer)",
+	initialRouteName: "(tabs)",
 };
 
 function StackLayout() {
 	return (
 		<Stack screenOptions={{}}>
-			<Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 			<Stack.Screen
 				name="modal"
 				options={{ title: "Modal", presentation: "modal" }}
+			/>
+			<Stack.Screen
+				name="(auth)"
+				options={{ headerShown: false, presentation: "modal" }}
 			/>
 		</Stack>
 	);

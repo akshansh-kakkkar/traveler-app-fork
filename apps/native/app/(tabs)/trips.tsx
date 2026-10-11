@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, router } from "expo-router";
 import {
 	ActivityIndicator,
-	Alert,
 	FlatList,
 	Text,
 	TouchableOpacity,
