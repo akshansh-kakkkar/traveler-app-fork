@@ -1,5 +1,11 @@
 import type React from "react";
-import { createContext, useCallback, useContext, useMemo } from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo,
+} from "react";
 import { Uniwind, useUniwind } from "uniwind";
 
 type ThemeName = "light" | "dark";
@@ -38,6 +44,11 @@ export const AppThemeProvider = ({
 	const toggleTheme = useCallback(() => {
 		Uniwind.setTheme(theme === "light" ? "dark" : "light");
 	}, [theme]);
+
+	// ! Forcing light theme for now while in development
+	useEffect(() => {
+		Uniwind.setTheme("light");
+	});
 
 	const value = useMemo(
 		() => ({

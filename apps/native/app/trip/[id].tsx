@@ -70,7 +70,7 @@ export default function TripDetail() {
 	}
 
 	return (
-		<Container className="p-5">
+		<Container className="p-5" isScrollable={false}>
 			<Stack.Screen
 				options={{
 					title: tripQuery.data.name,
