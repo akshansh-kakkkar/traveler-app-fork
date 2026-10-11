@@ -15,6 +15,8 @@ export async function callGroq(prompt: string, attempt = 1): Promise<string> {
 			messages: [{ role: "user", content: prompt }],
 			response_format: { type: "json_object" },
 			temperature: 0.7,
+			max_completion_tokens: 4000,
+			reasoning_effort: "low",
 		}),
 	});
 
