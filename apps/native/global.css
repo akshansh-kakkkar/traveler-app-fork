@@ -1,3 +1,74 @@
 @import "tailwindcss";
 @import "uniwind";
 @import "heroui-native/styles";
+
+/* ─────────────────────────────────────────────
+   TourNet palette — overrides heroui defaults.
+   Add new colours here, never as hex in components.
+   ───────────────────────────────────────────── */
+@layer theme {
+  :root {
+    @variant light {
+      /* Base */
+      --background: oklch(0.941 0.021 141); /* sage ground */
+      --foreground: oklch(0.252 0.038 155); /* deep green ink */
+
+      /* Cards and sheets */
+      --surface: oklch(0.985 0.006 95); /* cream card */
+      --surface-foreground: var(--foreground);
+      --surface-secondary: oklch(0.962 0.012 120); /* quieter card */
+      --surface-secondary-foreground: var(--foreground);
+
+      /* Supporting */
+      --muted: oklch(0.556 0.019 150); /* secondary text */
+      --border: oklch(0.885 0.018 140);
+      --separator: var(--border);
+
+      /* Primary action */
+      --accent: oklch(0.885 0.179 118); /* lime */
+      --accent-foreground: oklch(0.252 0.038 155); /* ink on lime */
+
+      /* Category tints */
+      --category-food: oklch(0.914 0.062 72);
+      --category-culture: oklch(0.906 0.054 300);
+      --category-nature: oklch(0.912 0.063 150);
+      --category-shopping: oklch(0.912 0.058 350);
+      --category-nightlife: oklch(0.9 0.055 275);
+      --category-attraction: oklch(0.925 0.07 90);
+    }
+
+    @variant dark {
+      --background: oklch(0.205 0.021 155);
+      --foreground: oklch(0.962 0.012 120);
+
+      --surface: oklch(0.262 0.023 155);
+      --surface-foreground: var(--foreground);
+      --surface-secondary: oklch(0.302 0.024 155);
+      --surface-secondary-foreground: var(--foreground);
+
+      --muted: oklch(0.715 0.021 145);
+      --border: oklch(0.342 0.022 152);
+      --separator: var(--border);
+
+      --accent: oklch(0.885 0.179 118);
+      --accent-foreground: oklch(0.205 0.021 155);
+
+      --category-food: oklch(0.432 0.058 72);
+      --category-culture: oklch(0.428 0.052 300);
+      --category-nature: oklch(0.43 0.058 150);
+      --category-shopping: oklch(0.43 0.054 350);
+      --category-nightlife: oklch(0.425 0.052 275);
+      --category-attraction: oklch(0.438 0.062 90);
+    }
+  }
+}
+
+/* Expose the category tints as Tailwind colours: bg-category-food etc. */
+@theme inline static {
+  --color-category-food: var(--category-food);
+  --color-category-culture: var(--category-culture);
+  --color-category-nature: var(--category-nature);
+  --color-category-shopping: var(--category-shopping);
+  --color-category-nightlife: var(--category-nightlife);
+  --color-category-attraction: var(--category-attraction);
+}
