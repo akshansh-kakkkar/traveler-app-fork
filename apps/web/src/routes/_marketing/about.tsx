@@ -1,4 +1,6 @@
 import About_Hero from "@/components/About/About-hero";
+import About_Tour_Plan from "@/components/About/About-tour-plan";
+import Girl_Banner from "@/components/About/Girl-banner";
 import WaterBody from "@/components/About/Water-body-section";
 import Footer from "@/components/marketing/Footer";
 import Navbar from "@/components/marketing/Navbar";
@@ -14,6 +16,8 @@ function AboutPage() {
       <Navbar />
 			<About_Hero />
 			<WaterBody />
+			<Girl_Banner />
+			<About_Tour_Plan />
       <Footer />
     </>
   );
