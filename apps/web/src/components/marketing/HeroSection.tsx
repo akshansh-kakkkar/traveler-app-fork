@@ -35,14 +35,14 @@ export default function HeroSeciton() {
   ];
 
   return (
-    <div className="h-screen overflow-hidden">
-      <div className="relative bg-[url('./hero-image.jpg')] flex justify-start items-center text-center bg-cover bg-center h-[93vh]">
+    <div className="md:h-screen h-[200vh] md:overflow-hidden">
+      <div className="relative bg-[url('./hero-image.jpg')] flex justify-start items-center text-center bg-cover bg-center h-full md:h-[93vh]">
         <div className="absolute inset-0  bg-black/45" />
-        <div className="flex gap-6 flex-col ml-120">
+        <div className="flex gap-6 flex-col justify-center lg:justify-start lg:items-start items-center w-full lg:ml-120">
           <div className="z-50 translate-y-4">
             <img src="./hero-vector.png" alt="hero-vector" />
           </div>
-          <div className="text-white z-50 text-6xl w-160 text-start font-extrabold">
+          <div className="text-white z-50 text-center lg:text-start  text-6xl w-160  font-extrabold">
             No matter where you're going to, we'll take you there
           </div>
           <div className="bg-[#F3F3F3]/60 inset-0 backdrop-blur-xs border-[#DF6951] border-1 text-xl  z-10 flex gap-4 py-8 px-4 items-center text-center justify-between rounded-sm">
@@ -92,7 +92,7 @@ export default function HeroSeciton() {
           </div>
         </div>
       </div>
-			<div className="w-full px-12 h-[7vh] bg-[#F7F7F7] flex justify-between items-center">
+			<div className=" w-full px-12 h-[7vh] bg-[#F7F7F7] flex justify-between items-center">
 					<img src="/swiss.png" alt="swiss" width="64px"  />
 					<img src="/trivago.png" alt="trivago" width="64px"  />
 					<img src="/air-bnb.png" alt="airbnb" width="64px"  />
