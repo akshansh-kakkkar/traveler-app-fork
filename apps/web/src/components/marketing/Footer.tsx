@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Bird, Ribbon, SwitchCamera, Vote } from "lucide-react";
 export default function Footer() {
   return (
-    <div className="relative flex bg-[url('/mountains.jpg')] items-center w-full justify-around my-4 bg-white h-[35vh]">
+    <div className="relative md:flex-row flex-col items-center gap-12 text-center justify-center flex bg-[url('/mountains.jpg')] md:items-center w-full md:justify-around my-4 bg-white md:h-[35vh]">
       <div className="flex z-20 h-35 flex-col items-start text-start gap-2">
         <Link to="/">
           <img src="/footer-logo.png" alt="logo" width="92px" />

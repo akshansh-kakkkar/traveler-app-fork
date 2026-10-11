@@ -18,10 +18,8 @@ export const Route = createFileRoute("/_marketing/")({
 function LandingPage() {
   return (
     <>
-      <div className="relative">
-        <Navbar />
-        <HeroSeciton />
-      </div>
+      <Navbar />
+      <HeroSeciton />
       <CategorySection />
       <AboutUs />
       <HeroBanner />
