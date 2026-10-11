@@ -43,6 +43,7 @@
 	"dependencies": {
 		"@traveler-app/env": "workspace:*",
 		"dotenv": "catalog:",
+		"lucide-react": "^1.55.0",
 		"resend": "^6.28.1",
 		"zod": "catalog:"
 	},
