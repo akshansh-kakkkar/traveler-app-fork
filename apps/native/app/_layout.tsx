@@ -1,6 +1,6 @@
 import "@/global.css";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { DarkTheme, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { HeroUINativeProvider, useThemeColor } from "heroui-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
