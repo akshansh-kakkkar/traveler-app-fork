@@ -2,14 +2,14 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Container } from "@/components/container";
-import Chip from "@/components/ui/Chip";
+import { Chip } from "@/components/ui/Chip";
 import { Day } from "@/components/ui/Day";
-import FieldRow from "@/components/ui/FieldRow";
+import { FieldRow } from "@/components/ui/FieldRow";
 import { ItemCard } from "@/components/ui/ItemCard";
-import MetaPill from "@/components/ui/MetaPill";
-import PrimaryButton from "@/components/ui/PrimaryButton";
+import { MetaPill } from "@/components/ui/MetaPill";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
-import SegmentControl from "@/components/ui/SegmentControl";
+import { SegmentControl } from "@/components/ui/SegmentControl";
 import { authClient } from "@/lib/auth-client";
 
 export default function Home() {
@@ -126,7 +126,7 @@ export default function Home() {
         category="food"
         description="Kaya toast and kopi at a kopitiam open since 1928."
         done={done}
-        duration="1 hr"
+        durationMin={60}
         onToggle={() => setDone(!done)}
         title="Feast"
         className="mt-2"
@@ -137,7 +137,7 @@ export default function Home() {
         category="food"
         description="Kaya toast and kopi at a kopitiam open since 1928."
         done={done}
-        duration="1 hr"
+        durationMin={60}
         onToggle={() => setDone(!done)}
         title="Feast"
         isNext

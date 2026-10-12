@@ -8,7 +8,7 @@ type Props = {
   className?: string;
 };
 
-export default function SegmentControl({
+export function SegmentControl({
   options,
   value,
   onChange,

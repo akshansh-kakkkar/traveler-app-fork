@@ -4,11 +4,11 @@ import { Text, View } from "react-native";
 
 type Props = {
   icon?: keyof typeof Ionicons.glyphMap;
-  label?: string;
+  label: string;
   className?: string;
 };
 
-export default function MetaPill({ icon, label, className }: Props) {
+export function MetaPill({ icon, label, className }: Props) {
   const foregroundColor = useThemeColor("foreground");
 
   return (

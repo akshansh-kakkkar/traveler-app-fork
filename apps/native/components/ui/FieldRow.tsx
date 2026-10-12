@@ -13,7 +13,7 @@ type Props = {
   className?: string;
 };
 
-export default function FieldRow({
+export function FieldRow({
   icon,
   label,
   value,

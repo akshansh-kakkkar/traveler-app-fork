@@ -11,7 +11,7 @@ type Prop = {
   className?: string;
 };
 
-export default function Chip({
+export function Chip({
   label,
   icon,
   selected,

@@ -2,13 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import type { PlaceCategory } from "@traveler-app/db";
 import { cn, useThemeColor } from "heroui-native";
 import { Pressable, Text, View } from "react-native";
-import CategoryTag from "./CategoryTag";
+import { CategoryTag } from "./CategoryTag";
 
 type Props = {
   startTime: string;
-  duration: string;
+  durationMin: number;
   title: string;
-  description: string;
+  description?: string;
   category: PlaceCategory;
   done: boolean;
   isNext?: boolean;
@@ -17,9 +17,20 @@ type Props = {
   className?: string;
 };
 
+const MINUTES_PER_HOUR = 60;
+
+function formatDuration(totalMin: number): string {
+  const hours = Math.floor(totalMin / MINUTES_PER_HOUR);
+  const minutes = totalMin % MINUTES_PER_HOUR;
+
+  if (hours === 0) return `${minutes} min`;
+  if (minutes === 0) return `${hours} hr`;
+  return `${hours} hr ${minutes} min`;
+}
+
 export function ItemCard({
   startTime,
-  duration,
+  durationMin,
   title,
   description,
   category,
@@ -56,7 +67,7 @@ export function ItemCard({
             isNext ? "text-background/70" : "text-muted",
           )}
         >
-          {duration}
+          {formatDuration(durationMin)}
         </Text>
       </View>
 
@@ -72,14 +83,16 @@ export function ItemCard({
         >
           {title}
         </Text>
-        <Text
-          className={cn(
-            "text-sm",
-            isNext ? "text-background/80" : "text-muted",
-          )}
-        >
-          {description}
-        </Text>
+        {description ? (
+          <Text
+            className={cn(
+              "text-sm",
+              isNext ? "text-background/80" : "text-muted",
+            )}
+          >
+            {description}
+          </Text>
+        ) : null}
         <CategoryTag category={category} />
       </View>
 

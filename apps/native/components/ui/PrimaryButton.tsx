@@ -1,21 +1,24 @@
-import { cn } from "heroui-native";
+import { cn, useThemeColor } from "heroui-native";
 import { ActivityIndicator, Pressable, Text } from "react-native";
 
 type Props = {
   label: string;
   onPress: () => void;
   loading?: boolean;
+  loadingLabel?: string;
   disabled?: boolean;
   className?: string;
 };
 
-export default function PrimaryButton({
+export function PrimaryButton({
   label,
   onPress,
   loading,
+  loadingLabel,
   disabled,
   className,
 }: Props) {
+  const spinnerColor = useThemeColor("accent-foreground");
   const inactive = disabled || loading;
 
   return (
@@ -30,9 +33,9 @@ export default function PrimaryButton({
         className,
       )}
     >
-      {loading && <ActivityIndicator color="#111" />}
-      <Text className="font-bold text-base text-foreground">
-        {loading ? "Building..." : label}
+      {loading && <ActivityIndicator color={spinnerColor} />}
+      <Text className="font-bold text-accent-foreground text-base">
+        {loading && loadingLabel ? loadingLabel : label}
       </Text>
     </Pressable>
   );

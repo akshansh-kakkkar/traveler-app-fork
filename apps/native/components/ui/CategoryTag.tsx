@@ -11,7 +11,7 @@ const CATEGORY_STYLES: Record<PlaceCategory, string> = {
   attraction: "bg-category-attraction",
 };
 
-export default function CategoryTag({ category }: { category: PlaceCategory }) {
+export function CategoryTag({ category }: { category: PlaceCategory }) {
   return (
     <View
       className={cn(
