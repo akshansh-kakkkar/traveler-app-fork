@@ -1,8 +1,10 @@
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
+import { Eye, EyeOff, Loader2, Mail, User } from "lucide-react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
+import z, { file } from "zod";
 import { authClient } from "@/lib/auth-client";
-
 import Loader from "./loader";
 
 const signupSchema = z
@@ -38,9 +40,9 @@ function FieldError({ errors }: { errors: unknown[] }) {
 }
 
 export default function SignUpForm({
-  onSwitchToSignIn,
+	onSwitchToSignIn,
 }: {
-  onSwitchToSignIn: () => void;
+	onSwitchToSignIn: () => void;
 }) {
 	const navigate = useNavigate({ from: "/" });
 	const formRef = useRef<HTMLDivElement>(null);
