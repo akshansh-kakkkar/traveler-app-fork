@@ -1,5 +1,5 @@
 import { m } from "@vite-pwa/assets-generator/dist/shared/assets-generator.Cjk4AKv_.mjs"
-import { icons, MicSignal, Plane, SquareDashed } from "lucide-react"
+import { MicSignal, Plane, SquareDashed } from "lucide-react"
 
 const keyPoints = [
 	{

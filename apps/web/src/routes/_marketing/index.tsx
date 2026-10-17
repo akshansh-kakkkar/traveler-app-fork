@@ -30,5 +30,6 @@ function LandingPage() {
       <BannerPromo />
       <Footer />
     </>
+
   );
 }
