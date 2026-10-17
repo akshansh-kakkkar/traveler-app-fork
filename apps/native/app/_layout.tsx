@@ -6,7 +6,11 @@ import { HeroUINativeProvider, useThemeColor } from "heroui-native";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { AppThemeProvider } from "@/contexts/app-theme-context";
+import {
+	useSafeAreaFrame,
+	useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { AppThemeProvider, useAppTheme } from "@/contexts/app-theme-context";
 import { queryClient } from "@/utils/trpc";
 
 export const unstable_settings = {
@@ -18,7 +22,7 @@ function StackLayout() {
 
 	return (
 		<View style={{ flex: 1, backgroundColor }}>
-			<StatusBar style="dark" />
+			<StatusBar style="light" />
 			<Stack
 				screenOptions={{
 					contentStyle: { backgroundColor },
