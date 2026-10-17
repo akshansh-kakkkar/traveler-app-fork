@@ -13,6 +13,7 @@ import {
 	View,
 } from "react-native";
 import { Container } from "@/components/container";
+import { GeneratingView } from "@/components/GeneratingView";
 import { Chip } from "@/components/ui/Chip";
 import { FieldRow } from "@/components/ui/FieldRow";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
@@ -21,6 +22,7 @@ import { SegmentControl } from "@/components/ui/SegmentControl";
 import { Stepper } from "@/components/ui/Stepper";
 import { TextArea } from "@/components/ui/TextArea";
 import { authClient } from "@/lib/auth-client";
+import { CATEGORY_ICONS } from "@/lib/category-icons";
 import { queryClient, trpc } from "@/utils/trpc";
 
 export default function Plan() {
@@ -29,10 +31,10 @@ export default function Plan() {
 		"culture",
 	]);
 	const [days, setDays] = useState(3);
-
 	const [activeDay, setActiveDay] = useState(0);
 	const [notes, setNotes] = useState("");
 	const [messageIndex, setMessageIndex] = useState(0);
+	const [startDate] = useState(() => new Date());
 
 	const generateMutation = useMutation(
 		trpc.itinerary.generate.mutationOptions({
@@ -100,20 +102,22 @@ export default function Plan() {
 		);
 	}
 
-	type IconName = keyof typeof Ionicons.glyphMap;
-
-	const CATEGORY_ICONS: Record<PlaceCategory, IconName> = {
-		food: "fast-food",
-		culture: "color-palette",
-		nature: "leaf",
-		shopping: "bag",
-		nightlife: "moon",
-		attraction: "camera",
-	};
-
 	const PACES = ["relaxed", "normal", "packed"] as const;
 	type Pace = (typeof PACES)[number];
 	const [pace, setPace] = useState<Pace>("normal");
+
+	if (isPending) {
+		return (
+			<Container isScrollable={false}>
+				<GeneratingView
+					days={days}
+					interests={interests}
+					pace={pace}
+					startDate={startDate}
+				/>
+			</Container>
+		);
+	}
 
 	return (
 		<Container

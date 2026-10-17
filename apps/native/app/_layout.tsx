@@ -6,11 +6,7 @@ import { HeroUINativeProvider, useThemeColor } from "heroui-native";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import {
-	useSafeAreaFrame,
-	useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import { AppThemeProvider, useAppTheme } from "@/contexts/app-theme-context";
+import { AppThemeProvider } from "@/contexts/app-theme-context";
 import { queryClient } from "@/utils/trpc";
 
 export const unstable_settings = {
