@@ -49,7 +49,7 @@
         "expo-secure-store": "~57.0.1",
         "expo-splash-screen": "~57.0.7",
         "expo-status-bar": "~57.0.1",
-        "expo-system-ui": "~57.0.2",
+        "expo-system-ui": "~57.0.4",
         "expo-web-browser": "~57.0.2",
         "heroui-native": "^1.0.8",
         "react": "19.2.3",

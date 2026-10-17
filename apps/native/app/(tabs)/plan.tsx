@@ -1,16 +1,25 @@
+import type { Ionicons } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
 import { PlaceCategory } from "@traveler-app/db/enums";
 import { router } from "expo-router";
+import { useThemeColor } from "heroui-native";
 import { useEffect, useMemo, useState } from "react";
 import {
 	ActivityIndicator,
 	FlatList,
+	Pressable,
 	Text,
-	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
 import { Container } from "@/components/container";
+import { Chip } from "@/components/ui/Chip";
+import { FieldRow } from "@/components/ui/FieldRow";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { SegmentControl } from "@/components/ui/SegmentControl";
+import { Stepper } from "@/components/ui/Stepper";
+import { TextArea } from "@/components/ui/TextArea";
 import { authClient } from "@/lib/auth-client";
 import { queryClient, trpc } from "@/utils/trpc";
 
@@ -20,7 +29,7 @@ export default function Plan() {
 		"culture",
 	]);
 	const [days, setDays] = useState(3);
-	const [pace, setPace] = useState<"relaxed" | "normal" | "packed">("normal");
+
 	const [activeDay, setActiveDay] = useState(0);
 	const [notes, setNotes] = useState("");
 	const [messageIndex, setMessageIndex] = useState(0);
@@ -91,72 +100,85 @@ export default function Plan() {
 		);
 	}
 
-	return (
-		<Container className="p-6" isScrollable={false}>
-			<Text className="mb-4 text-center text-lg">
-				{days} days in Kuala Lumpur ·{" "}
-				{interests.join(", ") || "pick an interest"}
-			</Text>
+	type IconName = keyof typeof Ionicons.glyphMap;
 
-			<Text className="mb-2 text-gray-500 text-sm">Interests</Text>
-			<View className="mb-4 flex-row flex-wrap gap-2">
-				{allCategories.map((item) => (
-					<InterestChip
-						key={item}
-						category={item}
-						isSelected={interests.includes(item)}
-						disabled={isPending}
-						onPress={() => toggleInterest(item)}
-					/>
-				))}
+	const CATEGORY_ICONS: Record<PlaceCategory, IconName> = {
+		food: "fast-food",
+		culture: "color-palette",
+		nature: "leaf",
+		shopping: "bag",
+		nightlife: "moon",
+		attraction: "camera",
+	};
+
+	const PACES = ["relaxed", "normal", "packed"] as const;
+	type Pace = (typeof PACES)[number];
+	const [pace, setPace] = useState<Pace>("normal");
+
+	return (
+		<Container
+			contentClassName="p-6"
+			isScrollable={true}
+			scrollViewProps={{ showsVerticalScrollIndicator: false }}
+		>
+			<ScreenHeader title="Plan a trip" eyebrow={`${days} days in`} />
+
+			<View className="mb-4 overflow-hidden rounded-3xl bg-surface px-4">
+				<FieldRow
+					icon="location-outline"
+					label="City"
+					value="Kuala Lumpur"
+					locked
+				/>
+				<View className="h-px bg-border" />
+
+				<FieldRow
+					icon="calendar-outline"
+					label="Start date"
+					value="Sun, 18 Oct"
+					onPress={() => {}} // date picker later; this is what shows the chevron
+				/>
+				<View className="h-px bg-border" />
+
+				<FieldRow
+					icon="time-outline"
+					label="Days"
+					value="1 to 7"
+					right={<Stepper value={days} onChange={setDays} min={1} max={7} />}
+				/>
 			</View>
 
-			<View className="mb-4 flex-row items-center justify-center gap-6">
-				<TouchableOpacity
-					className="h-10 w-10 items-center justify-center rounded-full border border-gray-300"
-					onPress={() => setDays((d) => Math.max(1, d - 1))}
-				>
-					<Text className="font-semibold text-lg">−</Text>
-				</TouchableOpacity>
-
-				<Text className="w-8 text-center font-semibold text-lg">{days}</Text>
-
-				<TouchableOpacity
-					className="h-10 w-10 items-center justify-center rounded-full border border-gray-300"
-					onPress={() => setDays((d) => Math.min(7, d + 1))}
-				>
-					<Text className="font-semibold text-lg">+</Text>
-				</TouchableOpacity>
+			<Text className="mt-3 mb-2 text-gray-500 text-sm">Interests</Text>
+			<View className="mb-4 flex-row flex-wrap gap-2">
+				{allCategories.map((item) => (
+					<Chip
+						key={item}
+						label={item}
+						icon={CATEGORY_ICONS[item]}
+						selected={interests.includes(item)}
+						onPress={() => toggleInterest(item)}
+						className=""
+					/>
+				))}
 			</View>
 
 			<Text className="mb-2 text-gray-500 text-sm">Pace</Text>
-			<View className="mb-4 flex-row justify-center gap-2">
-				{(["relaxed", "normal", "packed"] as const).map((p) => (
-					<DayChip
-						key={p}
-						label={p}
-						isSelected={pace === p}
-						disabled={isPending}
-						onPress={() => setPace(p)}
-					/>
-				))}
-			</View>
 
-			<TextInput
-				className="mb-4 rounded-xl border border-gray-300 p-4"
-				placeholder="Anything specific? e.g. mostly food, no temples"
-				value={notes}
+			<SegmentControl options={PACES} value={pace} onChange={setPace} />
+
+			<TextArea
+				label="Note"
 				onChangeText={setNotes}
+				value={notes}
 				editable={!isPending}
-				multiline
+				optional
 				maxLength={500}
+				placeholder="Anything the planner should know, like dietary needs"
+				className="m-2"
 			/>
 
-			<TouchableOpacity
-				className={`mb-4 items-center rounded-xl p-4 ${
-					canGenerate ? "bg-amber-400" : "bg-gray-300"
-				}`}
-				disabled={!canGenerate}
+			<PrimaryButton
+				label="Build my trip"
 				onPress={() =>
 					generateMutation.mutate({
 						cityId: "kl",
@@ -167,11 +189,9 @@ export default function Plan() {
 						notes: notes.trim() || undefined,
 					})
 				}
-			>
-				<Text className="font-semibold text-lg">
-					{isPending ? "Generating…" : "Generate"}
-				</Text>
-			</TouchableOpacity>
+				disabled={!canGenerate}
+				className={`-mt-8 ${!canGenerate ? "bg-gray-300" : ""} mb-4`}
+			/>
 
 			{generateMutation.isPending && (
 				<View className="items-center py-8">
@@ -237,30 +257,6 @@ function DayChip({
 			onPress={onPress}
 		>
 			<Text className="font-medium">{label}</Text>
-		</TouchableOpacity>
-	);
-}
-
-function InterestChip({
-	category,
-	isSelected,
-	disabled,
-	onPress,
-}: {
-	category: PlaceCategory;
-	isSelected: boolean;
-	disabled?: boolean;
-	onPress: () => void;
-}) {
-	return (
-		<TouchableOpacity
-			disabled={disabled}
-			className={`self-start rounded-full border px-4 py-2 ${
-				isSelected ? "border-amber-400 bg-amber-100" : "border-gray-300"
-			} ${disabled ? "opacity-40" : ""}`}
-			onPress={onPress}
-		>
-			<Text className="font-medium capitalize">{category}</Text>
 		</TouchableOpacity>
 	);
 }
