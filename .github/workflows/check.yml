@@ -7,6 +7,11 @@ on:
 jobs:
   biome:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+      BETTER_AUTH_SECRET: ci-placeholder-secret-value-32-characters
+      BETTER_AUTH_URL: http://localhost:3000
+      CORS_ORIGIN: http://localhost:3000
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
