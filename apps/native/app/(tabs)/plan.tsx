@@ -117,7 +117,7 @@ export default function Plan() {
 
 	return (
 		<Container
-			className="p-6"
+			contentClassName="p-6"
 			isScrollable={true}
 			scrollViewProps={{ showsVerticalScrollIndicator: false }}
 		>
@@ -193,7 +193,7 @@ export default function Plan() {
 				className={`-mt-8 ${!canGenerate ? "bg-gray-300" : ""} mb-4`}
 			/>
 
-			{/* {generateMutation.isPending && (
+			{generateMutation.isPending && (
 				<View className="items-center py-8">
 					<ActivityIndicator />
 					<Text className="mt-3 text-gray-600">{MESSAGES[messageIndex]}</Text>
@@ -202,9 +202,9 @@ export default function Plan() {
 
 			{generateMutation.error && (
 				<Text className="text-red-500">{generateMutation.error.message}</Text>
-			)} */}
+			)}
 
-			{/* {sections.length > 0 && (
+			{sections.length > 0 && (
 				<FlatList
 					data={sections}
 					keyExtractor={(section) => section.title}
@@ -219,9 +219,9 @@ export default function Plan() {
 						/>
 					)}
 				/>
-			)} */}
+			)}
 
-			{/* <FlatList
+			<FlatList
 				data={sections[activeDay]?.data ?? []}
 				keyExtractor={(item) => item.id}
 				className="flex-1"
@@ -234,7 +234,7 @@ export default function Plan() {
 						{item.notes && <Text className="text-gray-600">{item.notes}</Text>}
 					</View>
 				)}
-			/> */}
+			/>
 		</Container>
 	);
 }

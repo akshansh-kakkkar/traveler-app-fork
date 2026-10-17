@@ -8,12 +8,14 @@ import {
 } from "react-native";
 import Animated, { type AnimatedProps } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTabBarSpace } from "@/lib/tab-bar";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 type Props = AnimatedProps<ViewProps> & {
 	className?: string;
 	isScrollable?: boolean;
+	contentClassName?: string;
 	scrollViewProps?: Omit<ScrollViewProps, "contentContainerStyle">;
 };
 
@@ -22,9 +24,11 @@ export function Container({
 	className,
 	isScrollable = true,
 	scrollViewProps,
+	contentClassName,
 	...props
 }: PropsWithChildren<Props>) {
 	const insets = useSafeAreaInsets();
+	const bottomSpace = useTabBarSpace();
 
 	return (
 		<AnimatedView
@@ -36,9 +40,14 @@ export function Container({
 		>
 			{isScrollable ? (
 				<ScrollView
-					contentContainerStyle={{ flexGrow: 1 }}
+					contentContainerStyle={{
+						flexGrow: 1,
+						paddingBottom: bottomSpace,
+						paddingTop: insets.top,
+					}}
 					keyboardShouldPersistTaps="handled"
 					contentInsetAdjustmentBehavior="automatic"
+					contentContainerClassName={contentClassName}
 					{...scrollViewProps}
 				>
 					{children}
