@@ -93,8 +93,11 @@ export default function SignUpForm({
 	return (
 		<div className="flex h-screen items-center justify-center bg-gray-100 text-center">
 			<div className="mx-64 flex w-full rounded-lg bg-white shadow-md">
-				<div className="relative inset-0 inset-0 h-[600px] w-1/2 rounded-l-lg bg-[url('/about-hero.jpg')] bg-center bg-cover">
-					<div className="absolute inset-0 rounded-l-lg bg-black/20" />
+				<div className="relative inset-0 inset-0 h-[650px] w-1/2 rounded-l-lg bg-[url('/about-hero.jpg')] bg-center bg-cover">
+					<div className="absolute inset-0 rounded-l-lg bg-black/40" />
+					<div className="z-500 absolute m-12">
+						<img src="/navbar-logo.png" alt="logo" />
+					</div>
 				</div>
 				<div className="mx-4 my-4 flex w-1/2 flex-col items-start justify-start">
 					<div className="mt-6 flex w-full justify-center">
@@ -276,6 +279,12 @@ export default function SignUpForm({
 							</>
 						)}
 					</button>
+					<div className="text-black text-sm flex w-full h-2 gap-1 items-center justify-center py-4 font-light">Already have an account?
+					<button
+					type="button"
+					onClick={onSwitchToSignIn}
+					className="underline underline-offset-2">Sign in</button>
+					</div>
 				</div>
 			</div>
 		</div>
