@@ -1,12 +1,64 @@
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
+import { useRef } from "react";
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 export default function WaterBody() {
+	const waterBodyRef = useRef<HTMLDivElement>(null);
+	useGSAP(
+		()=>{
+			const tl = gsap.timeline({
+				defaults : {ease : "power3.out"},
+				scrollTrigger : {
+					trigger : waterBodyRef.current,
+					start : "top 75%",
+					once : true,
+				},
+			});
+			tl.from(".water-heading", {
+				x : -35,
+				opacity : 0,
+				duration : 0.7,
+			}).from(
+				".water-label",
+				{
+					y : 15,
+					opacity : 0,
+					duration : 0.45,
+				},
+				"-=0.35"
+			).from( ".water-button", {
+					y : 15,
+					opacity : 0,
+					duration : 0.45,
+				},
+			"-=0.2").from(".water-circle", {
+				scale : 0.8,
+				opacity : 0,
+				durattion : 0.9,
+			},
+		"-=0.5").from(
+			".water-decoration",
+			{
+				scaleX : 0,
+				transformOrigin : 'left center',
+				opacity : 0,
+				duration : 0.4,
+				stagger : 0.08,
+			},
+			"-=0.5",
+		);
+		},
+		{ scope : waterBodyRef }
+	);
   return (
-    <div className="h-[70vh] flex gap-12 mx-24 justify-center items-center">
+    <div ref={waterBodyRef} className="h-[70vh] flex gap-12 mx-24 justify-center items-center">
       <div className="w-[50vw] text-black flex flex-col gap-4">
         <div className="text-lg font-bold">PROMOTION</div>
-        <div className="text-4xl w-[30vw] font-volkhov text-[#181E4B] font-bold">
+        <div className="water-heading text-4xl w-[30vw] font-volkhov text-[#181E4B] font-bold">
           We Provide You Best Europe Sightseeing Tours
         </div>
-        <div className="font-poppins text-sm w-[40vw]">
+        <div className="water-description font-poppins text-sm w-[40vw]">
           Paris, known as the City of Love, offers an unmatched romantic escape
           with its iconic Eiffel Tower glowing against the evening sky and
           leisurely walks along the historic Seine River. Couples can wander
@@ -14,12 +66,12 @@ export default function WaterBody() {
           enjoy intimate candlelit dinners at sidewalk cafes that make every
           moment feel timeless.
         </div>
-        <div className="bg-[#DF6951] w-fit px-4 py-2 rounded-lg text-white text-lg font-bold">
+        <div className="watter-button bg-[#DF6951] w-fit px-4 py-2 rounded-lg text-white text-lg font-bold">
           View Packages
         </div>
       </div>
       <div className="relative mx-auto aspect-square w-[500px]">
-        <div className="absolute inset-[8%] overflow-hidden rounded-full border-2 border-sky-500">
+        <div className="water-circle absolute inset-[8%] overflow-hidden rounded-full border-2 border-sky-500">
           <img
             src="/water-body.jpg"
             alt="water-body"
@@ -37,8 +89,8 @@ export default function WaterBody() {
             }}
           >
             <div className="relative h-6 w-16">
-              <div className="absolute inset-x-0 top-1 h-[2px] rounded-full bg-[#DF6951]" />
-              <div className="absolute inset-x-0 top-3 h-[2px] rounded-full bg-[#DF6951]" />
+              <div className="water-decoration absolute inset-x-0 top-1 h-[2px] rounded-full bg-[#DF6951]" />
+              <div className="water-decoration absolute inset-x-0 top-3 h-[2px] rounded-full bg-[#DF6951]" />
             </div>
           </div>
         ))}

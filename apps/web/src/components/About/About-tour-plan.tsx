@@ -1,4 +1,13 @@
+
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
 export default function About_Tour_Plan() {
+	const tourPlaneRef = useRef<HTMLDivElement>(null);
+
   const stats = [
     {
       id: 1,
@@ -19,17 +28,77 @@ export default function About_Tour_Plan() {
       color: "#7202FF",
     },
   ];
+
+	useGSAP(
+		()=>{
+			const tl = gsap.timeline({
+				defaults : {ease : "power3.out"},
+				scrollTrigger : {
+					trigger : tourPlaneRef.current,
+					start : "top 75%",
+					once : true,
+				},
+			});
+			tl.from(".tour-plan-image", {
+				x : -40,
+				opacity : 0,
+				duration : 0.8,
+			}).from(
+				".tour-plan-label",
+				{
+					y :15,
+					opacity	 : 0,
+					duration : 0.4,
+				},
+				"-=0.4",
+			).from(
+				".tour-plan-heading",
+				{
+					y : 25,
+					opacity : 0,
+					duration: 0.6
+				},
+				"-=0.2"
+			).from(
+				".tour-plan-description",
+				{
+					y : 20,
+					opacity : 0,
+					duration : 0.6,
+				},
+				"-=0.3",
+			).from(
+				".tour-plan-stat",
+				{
+					y : 20,
+					opacity : 0,
+					duration : 0.6,
+				},
+				"-=0.3",
+			).from(
+							".tour-plan-shell",
+							{
+								scale : 0.8,
+								rotation : -15,
+								opacity : 0,
+								duration : 0.7,
+							},
+							"-=0.5"
+						);
+		},
+		{scope : tourPlaneRef}
+	)
   return (
-    <div className="relative h-[70vh] flex gap-24 justify-center items-center">
-      <div>
+    <div ref={tourPlaneRef} className="relative h-[70vh] flex gap-24 justify-center items-center">
+      <div className="tour-plan-image">
         <img src="/tour-plan.png" alt="tour-plan" />
       </div>
       <div className="w-[40vw] flex flex-col gap-2">
-        <div className="text-sm font-bold text-[#DF6951]">TREND</div>
-        <div className="text-3xl font-bold font-volkhov text-[#181E4B]">
+        <div className="tour-plan-label text-sm font-bold text-[#DF6951]">TREND</div>
+        <div className="text-3xl tour-plan-heading font-bold font-volkhov text-[#181E4B]">
           Our Popular Tour Plans
         </div>
-        <div className="text-md text-black">
+        <div className="text-md tour-plan-description text-black">
           Giza is an Egyptian city on the west bank of the Nile. It is globally
           famous for the Giza Plateau, a vast ancient necropolis. This historic
           site features the iconic Great Sphinx and the three massive pyramids
@@ -37,10 +106,11 @@ export default function About_Tour_Plan() {
         </div>
         <div className="flex justify-around my-12">
           {stats.map((stat) => (
-            <div className="flex items-center justify-center gap-10">
+            <div                   
+						key={stat.id}
+						className="tour-plan-stat flex items-center justify-center gap-10">
               <div className="flex items-center justify-center gap-10">
                 <div
-                  key={stat.id}
                   className="flex flex-col items-center gap-4"
                 >
                   <div
@@ -64,7 +134,7 @@ export default function About_Tour_Plan() {
           ))}
         </div>
       </div>
-			<div className="absolute right-4 top-2">
+			<div className="tour-plan-shell absolute right-4 top-2">
 				<img src="/tour-plan-shell.png" alt="tour-plan" width={200} />
 			</div>
     </div>
