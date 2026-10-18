@@ -13,14 +13,15 @@ export default function Navbar() {
 			});
 
 			tl.from(".navbar-logo", {
-				y: -20,
+				y: -18,
+				scale : 0.9,
 				opacity: 0,
-				duration: 0.6,
+				duration: 0.65,
 			})
 				.from(
 					".navbar-link",
 					{
-						y: -15,
+						y: -12,
 						opacity: 0,
 						duration: 0.45,
 						stagger: 0.1,
@@ -105,7 +106,7 @@ export default function Navbar() {
 			</div>
 			<a
 				href="/login"
-				className="hidden navbar-login  rounded-lg bg-[#DF6951] px-4 py-1 font-medium sm:block"
+				className="navbar-login hidden rounded-lg bg-[#DF6951] px-4 py-1 font-medium sm:block"
 			>
 				Login
 			</a>

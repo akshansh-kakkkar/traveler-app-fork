@@ -1,7 +1,8 @@
-import { useGSAP } from "@gsap/react"
-import { useRef } from "react"
+import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
+
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 export default function Girl_Banner() {
 	const bannerRef = useRef<HTMLDivElement>(null);
@@ -11,11 +12,11 @@ export default function Girl_Banner() {
 				defaults: {
 					ease: "power3.out",
 				},
-									scrollTrigger: {
-						trigger: bannerRef.current,
-						start: "top 75%",
-						once: true,
-					}
+				scrollTrigger: {
+					trigger: bannerRef.current,
+					start: "top 75%",
+					once: true,
+				},
 			});
 			tl.from(".girl-banner-bg", {
 				scale: 1.12,
@@ -30,14 +31,20 @@ export default function Girl_Banner() {
 				"-=0.7",
 			);
 		},
-		{ scope: bannerRef }
-	)
+		{ scope: bannerRef },
+	);
 	return (
-		<div ref={bannerRef} className="relative h-[60vh] great-vibes font-bold text-white text-center flex justify-center items-center text-9xl">
-			<div aria-hidden="true" className="girl-banner-bg absolute inset-0  bg-[url('/girl-pic.jpg')] bg-cover bg-center" />
-			<div className="girl-banner-title relative z-10 great-vibes font-bold text-white text-center text-9xl">
-Wanderlust
+		<div
+			ref={bannerRef}
+			className="great-vibes relative flex h-[60vh] items-center justify-center text-center font-bold text-9xl text-white"
+		>
+			<div
+				aria-hidden="true"
+				className="girl-banner-bg absolute inset-0 bg-[url('/girl-pic.jpg')] bg-center bg-cover"
+			/>
+			<div className="girl-banner-title great-vibes relative z-10 text-center font-bold text-9xl text-white">
+				Wanderlust
 			</div>
 		</div>
-	)
+	);
 }
