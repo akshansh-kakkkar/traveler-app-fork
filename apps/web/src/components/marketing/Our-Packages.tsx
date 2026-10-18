@@ -1,5 +1,9 @@
 import { Calendar, MapPin, Star, UserRound } from "lucide-react";
-
+import { useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+gsap.registerPlugin(ScrollTrigger, useGSAP,);
 const cards = [
   {
     id: 1,
@@ -42,8 +46,37 @@ const cards = [
   },
 ];
 export default function OurPackages() {
+	const sectionRef = useRef<HTMLElement>(null);
+	useGSAP(
+		()=>{
+			const tl = gsap.timeline({
+				scrollTrigger : {
+					trigger : sectionRef.current,
+					start : "top 75%",
+					once : true,
+				}
+			});
+			tl.from(".packages-heading", 
+				{
+					y : 30,
+					opacity : 0,
+					duration : 0.7,
+				}
+			).from(
+				".package-card",
+				{
+					y : 50,
+					opacity : 0,
+					duration : 0.7,
+					stagger : 0.2,
+				},
+				"-=0.2",
+			);
+		},
+		{scope : sectionRef},
+	)
   return (
-    <div className="flex flex-col gap-4 lg:my-5 xl:h-screen">
+    <section ref={sectionRef} className="flex flex-col gap-4 lg:my-5 xl:h-screen">
       <div className="flex flex-col my-12 justify-center items-center text-center">
         <div className="uppercase font-bold text-[#DF6951]">Trendy</div>
         <div className="font-volkhov text-6xl leading-14 w-125 font-semibold text-[#181E4B]">
@@ -52,12 +85,12 @@ export default function OurPackages() {
       </div>
       <div className="md:grid md:grid-cols-3 flex flex-col  gap-12 place-items-center justify-center text-card items-center">
         {cards.map((card) => (
-          <div key={card.id} className="xl:w-[450px] xl:h-[510px] md:w-[350px] w-[400px] h-[550px] rounded-2xl shadow-sm">
+          <div key={card.id} className="package-card xl:w-[450px] xl:h-[510px] md:w-[350px] w-[400px] h-[550px] rounded-2xl shadow-sm">
             <div className="relative">
               <img
                 src={card.image}
                 alt={card.title}
-                className="w-[450px] h-[250px] rounded-2xl object-cover"
+                className="package-image w-[450px] h-[250px] rounded-2xl object-cover"
               />
               <img
                 src={card.flag}
@@ -115,6 +148,6 @@ export default function OurPackages() {
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
