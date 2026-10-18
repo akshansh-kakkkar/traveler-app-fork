@@ -1,5 +1,9 @@
-import { m } from "@vite-pwa/assets-generator/dist/shared/assets-generator.Cjk4AKv_.mjs"
-import { icons, MicSignal, Plane, SquareDashed } from "lucide-react"
+import { MicSignal, Plane, SquareDashed } from "lucide-react"
+import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger  } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const keyPoints = [
 	{
@@ -25,15 +29,55 @@ const keyPoints = [
 	}
 ]
 export default function HeroBanner(){
+	const sectionRef = useRef<HTMLElement>(null);
+	useGSAP(
+		() =>{
+			const tl = gsap.timeline({
+				scrollTrigger : {
+					trigger :sectionRef.current,
+					start : "top 75%",
+					once : true,
+				},
+				defaults : {
+					ease  : "power3.out",
+				}
+			});
+			tl.from(".banner-heading", {
+				x : -40,
+				opacity : 0,
+				duration : 0.7,
+			})
+			.from(
+				".banner-point",
+				{
+					y : 25,
+					opacity : 0,
+					duration : 0.55,
+					stagger : 0.18,
+				},
+				"-=0.2"
+			).from(".banner-image",{
+				x : 60,
+				opacity : 0,
+				scale : 0.95,
+				duration : 1,
+			},
+		"-=0.5"
+	);
+	{
+		scope : sectionRef
+	}
+		}
+	)
 	return(
-		<div className="lg:h-[70vh] lg:my-0 my-12 lg:flex-row flex-col flex justify-center items-center text-center gap-12">
+		<section ref={sectionRef} className="lg:h-[70vh] lg:my-0 my-12 lg:flex-row flex-col flex justify-center items-center text-center gap-12">
 			<div>
 				<div className="flex flex-col  text-start  ml-12">
 					<div className="text-[#DF6951] font-bold">Fast & Easy</div>
 					<div className="font-volkhov w-100 text-[#181E4B] text-5xl font-bold">Get Your Favourite Resort Bookings</div>
 				</div>
 				{keyPoints.map((key)=>(
-					<div className="flex gap-6 text-start ml-12 my-12  items-center w-160">
+					<div className="banner-point flex gap-6 text-start ml-12 my-12  items-center w-160">
 						<div style={{backgroundColor : key.bg}} className="text-xl w-16 h-14 flex justify-center items-center rounded-lg ">
 							 {key.icon}
 						</div>
@@ -45,8 +89,8 @@ export default function HeroBanner(){
 				))}
 			</div>
 			<div>
-				<img src="/airplane-banner.png" alt="air-plane" />
+				<img src="/airplane-banner.png" alt="air-plane" className="banner-image" />
 			</div>
-		</div>
+		</section>
 	)
 }
