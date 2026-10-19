@@ -1,8 +1,8 @@
 # TourNet
 
-`TourNet is a travel planner  that helps people turn their trip into an organized, time-aware daily itinerary`
+`TourNet is a travel planner that helps people turn their trip into an organized, time-aware daily itinerary`
 
-### TechStack
+### Tech Stack
 
 - Project Setup Better-T-Stack
 - Tanstack-router
@@ -42,6 +42,10 @@
 - overpass query across kl covering 6 types of places
 - toPlace() map osm tags to the schema
 - upsert so osmId doesn't rerun already verified places by guides
+- My trips cards status is always "upcoming" and the date range is plain text for now
+- Trip filters (Upcoming / Past / Shared) and the "Up next" card
+- Places database: overpass query across kl for 6 place types `toPlace()` maps osm tags to the schema, upsert on osmId so verified places don't get overwritten
+- Discover screen: infinite scroll, category filters, unverified badge, loading and error
 
 - a screen to display api data from the server: infinite scroll, category filters, unverified badge, loading and error
 
@@ -51,7 +55,6 @@
 #### Trip Routes
 
 - `/api/trips/create`
-- `/api/trips/getAll`
 - `/api/trips/getAll`
 - `/api/trips/update`
 - `/api/trips/delete`
@@ -85,12 +88,15 @@ packages/
 - items that fail validation are removed
 
 ### Mobile App
-Screens: Discover, Itinerary, My trips, Home and Trip detail
-Sign in/up as modal
+Tabs: Home, Discover, My trips, Profile
+Center button in the tab bar opens the planner then generating screen (like intermission) then trip details
+Sign in/up as modal, guests can browse but need an account to plan
+My trips show cards with stops, done count, and empty/error/signed out states
 Design tokens in `apps/native/global.css`, components in `apps/native/components/ui`
+Light theme is forced for now
 
 ### Running on physical phone
-- EXPO_PUBLIC_SERVER_URL must be your pcs land ip ovoer `http://` or `10.0.2.2`
+- EXPO_PUBLIC_SERVER_URL must be your pcs lan ip over `http://` (`10.0.2.2` for android emulator)
 - same wifi
 - `bun expo start -c`
 
