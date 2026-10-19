@@ -1,20 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { useThemeColor } from "heroui-native";
 import {
 	ActivityIndicator,
+	Alert,
 	FlatList,
 	Pressable,
-	Text,
-	TouchableOpacity,
+	View,
 } from "react-native";
 import { Container } from "@/components/container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { TripCard } from "@/components/ui/TripCard";
 import { authClient } from "@/lib/auth-client";
 import { useTabBarSpace } from "@/lib/tab-bar";
 import { trpc } from "@/utils/trpc";
+
+const MS_PER_DAY = 86_400_000;
 
 export default function Trips() {
 	const { data: session, isPending: sessionPending } = authClient.useSession();
@@ -38,6 +41,21 @@ export default function Trips() {
 		return <ActivityIndicator />;
 
 	const trips = tripsQuery.data ?? [];
+
+	function confirmDelete(trip: { id: string; name: string }) {
+		Alert.alert(
+			"Delete this trip?",
+			`"${trip.name}" and all it stops will be deleted. You can't undo this.`,
+			[
+				{ text: "Cancel", style: "cancel" },
+				{
+					text: "Delete trip",
+					style: "destructive",
+					onPress: () => deleteTrip.mutate({ id: trip.id }),
+				},
+			],
+		);
+	}
 
 	return (
 		<Container className="p-6" isScrollable={false}>
@@ -83,32 +101,44 @@ export default function Trips() {
 				<FlatList
 					data={trips}
 					keyExtractor={(trip) => trip.id}
+					ItemSeparatorComponent={Separator}
 					contentContainerStyle={{ paddingBottom: bottomSpace }}
 					renderItem={({ item }) => (
-						<>
-							<Link
-								href={{ pathname: "/trip/[id]", params: { id: item.id } }}
-								asChild
-							>
-								<TouchableOpacity className="mb-3 rounded-lg border border-gray-300 p-4">
-									<Text className="font-semibold text-lg">{item.name}</Text>
-									<Text className="text-gray-500 text-sm">
-										{item.startDate
-											? new Date(item.startDate).toDateString()
-											: "No dates"}
-									</Text>
-								</TouchableOpacity>
-							</Link>
-							<TouchableOpacity
-								onPress={() => deleteTrip.mutate({ id: item.id })}
-								className="px-3 py-2"
-							>
-								<Text className="text-red-500">Delete</Text>
-							</TouchableOpacity>
-						</>
+						<TripCard
+							name={item.name}
+							dateRange={
+								item.startDate
+									? new Date(item.startDate).toDateString()
+									: "No dates"
+							}
+							days={tripDays(item.startDate, item.endDate)}
+							stops={item.stops}
+							done={item.done}
+							status="upcoming" // TODO determine from dates
+							shared={item.role !== "owner"}
+							canDelete={item.role === "owner"}
+							onPress={() =>
+								router.push({ pathname: "/trip/[id]", params: { id: item.id } })
+							}
+							onDelete={() => confirmDelete(item)}
+						/>
 					)}
 				/>
 			)}
 		</Container>
 	);
+}
+
+function Separator() {
+	return <View className="h-3" />;
+}
+
+// TODO move to shared lib when status and date ranges are done
+function tripDays(
+	start: string | Date | null,
+	end: string | Date | null,
+): number {
+	if (!start || !end) return 1;
+	const diff = new Date(end).getTime() - new Date(start).getTime();
+	return Math.max(1, Math.round(diff / MS_PER_DAY) + 1);
 }
