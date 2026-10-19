@@ -6,36 +6,43 @@ import { Pressable, Text, View } from "react-native";
 type Props = {
 	title: string;
 	eyebrow?: string;
+	subtitle?: string;
 	onBack?: () => void;
 	right?: ReactNode;
 };
 
-export function ScreenHeader({ title, eyebrow, onBack, right }: Props) {
+export function ScreenHeader({
+	title,
+	eyebrow,
+	subtitle,
+	onBack,
+	right,
+}: Props) {
 	const foregroundColor = useThemeColor("foreground");
 
 	return (
 		<View className="mb-4 gap-4">
-			{(onBack || right) && (
+			{onBack && (
 				<View className="flex-row items-center justify-between">
-					{onBack ? (
-						<Pressable
-							onPress={onBack}
-							accessibilityRole="button"
-							accessibilityLabel="Go back"
-							className="h-12 w-12 items-center justify-center rounded-full bg-background"
-						>
-							<Ionicons name="chevron-back" size={22} color={foregroundColor} />
-						</Pressable>
-					) : (
-						<View />
-					)}
+					<Pressable
+						onPress={onBack}
+						accessibilityRole="button"
+						accessibilityLabel="Go back"
+						className="h-12 w-12 items-center justify-center rounded-full bg-surface"
+					>
+						<Ionicons name="chevron-back" size={22} color={foregroundColor} />
+					</Pressable>
 					{right}
 				</View>
 			)}
 
-			<View className="gap-1">
-				{eyebrow && <Text className="text-muted text-sm">{eyebrow}</Text>}
-				<Text className="font-bold text-4xl text-foreground">{title}</Text>
+			<View className="flex-row items-center justify-between gap-3">
+				<View className="flex-1 gap-1">
+					{eyebrow && <Text className="text-muted text-sm">{eyebrow}</Text>}
+					<Text className="font-bold text-4xl text-foreground">{title}</Text>
+					{subtitle && <Text className="text-base text-muted">{subtitle}</Text>}
+				</View>
+				{!onBack && right}
 			</View>
 		</View>
 	);
