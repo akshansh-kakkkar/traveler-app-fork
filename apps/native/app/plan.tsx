@@ -14,27 +14,11 @@ import { Stepper } from "@/components/ui/Stepper";
 import { TextArea } from "@/components/ui/TextArea";
 import { authClient } from "@/lib/auth-client";
 import { CATEGORY_ICONS } from "@/lib/category-icons";
+import { formatDate } from "@/lib/format-date";
 import { queryClient, trpc } from "@/utils/trpc";
 
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const MONTHS = [
-	"Jan",
-	"Feb",
-	"Mar",
-	"Apr",
-	"May",
-	"Jun",
-	"Jul",
-	"Aug",
-	"Sep",
-	"Oct",
-	"Nov",
-	"Dec",
-];
-
-function formatDate(date: Date) {
-	return `${WEEKDAYS[date.getDay()]}, ${date.getDate()} ${MONTHS[date.getMonth()]}`;
-}
+const PACES = ["relaxed", "normal", "packed"] as const;
+type Pace = (typeof PACES)[number];
 
 export default function Plan() {
 	const [interests, setInterests] = useState<PlaceCategory[]>([
@@ -73,13 +57,11 @@ export default function Plan() {
 		);
 	}
 
-	const PACES = ["relaxed", "normal", "packed"] as const;
-	type Pace = (typeof PACES)[number];
 	const [pace, setPace] = useState<Pace>("normal");
 
 	if (isPending) {
 		return (
-			<Container isScrollable={false}>
+			<Container isScrollable={false} hasTabBar={false}>
 				<GeneratingView
 					days={days}
 					interests={interests}
@@ -94,9 +76,14 @@ export default function Plan() {
 		<Container
 			contentClassName="p-6"
 			isScrollable={true}
+			hasTabBar={false}
 			scrollViewProps={{ showsVerticalScrollIndicator: false }}
 		>
-			<ScreenHeader title="Plan a trip" eyebrow={`${days} days in`} />
+			<ScreenHeader
+				title="Plan a trip"
+				subtitle="A day by day plan built only from guide verified places"
+				onBack={() => router.back()}
+			/>
 
 			<View className="mb-4 overflow-hidden rounded-3xl bg-surface px-4">
 				<FieldRow
@@ -123,7 +110,7 @@ export default function Plan() {
 				/>
 			</View>
 
-			<Text className="mt-3 mb-2 text-gray-500 text-sm">Interests</Text>
+			<Text className="mt-3 mb-2 text-muted text-sm">Interests</Text>
 			<View className="mb-4 flex-row flex-wrap gap-2">
 				{allCategories.map((item) => (
 					<Chip
@@ -136,7 +123,7 @@ export default function Plan() {
 				))}
 			</View>
 
-			<Text className="mb-2 text-gray-500 text-sm">Pace</Text>
+			<Text className="mb-2 text-muted text-sm">Pace</Text>
 
 			<SegmentControl options={PACES} value={pace} onChange={setPace} />
 
@@ -164,7 +151,7 @@ export default function Plan() {
 					})
 				}
 				disabled={!canGenerate}
-				className="-mt-8 mb-4"
+				className="-mt-8"
 			/>
 
 			{generateMutation.error && (

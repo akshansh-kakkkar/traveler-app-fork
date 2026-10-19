@@ -15,6 +15,7 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 type Props = AnimatedProps<ViewProps> & {
 	className?: string;
 	isScrollable?: boolean;
+	hasTabBar?: boolean;
 	contentClassName?: string;
 	scrollViewProps?: Omit<ScrollViewProps, "contentContainerStyle">;
 };
@@ -23,12 +24,14 @@ export function Container({
 	children,
 	className,
 	isScrollable = true,
+	hasTabBar = true,
 	scrollViewProps,
 	contentClassName,
 	...props
 }: PropsWithChildren<Props>) {
 	const insets = useSafeAreaInsets();
-	const bottomSpace = useTabBarSpace();
+	const tabBarSpace = useTabBarSpace();
+	const bottomSpace = hasTabBar ? tabBarSpace : insets.bottom + 16;
 
 	return (
 		<AnimatedView
