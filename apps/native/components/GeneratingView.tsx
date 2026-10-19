@@ -11,24 +11,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { MetaPill } from "@/components/ui/MetaPill";
 import { CATEGORY_ICONS } from "@/lib/category-icons";
+import { formatDate } from "@/lib/format-date";
 
 const LONG_WAIT_MS = 15_000;
 const RING_SIZE = 240;
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const MONTHS = [
-	"Jan",
-	"Feb",
-	"Mar",
-	"Apr",
-	"May",
-	"Jun",
-	"Jul",
-	"Aug",
-	"Sep",
-	"Oct",
-	"Nov",
-	"Dec",
-];
 
 type Props = {
 	days: number;
@@ -36,10 +22,6 @@ type Props = {
 	pace: string;
 	interests: PlaceCategory[];
 };
-
-function formatDate(date: Date) {
-	return `${WEEKDAYS[date.getDay()]}, ${date.getDate()} ${MONTHS[date.getMonth()]}`;
-}
 
 function capitalize(text: string) {
 	return text.charAt(0).toUpperCase() + text.slice(1);

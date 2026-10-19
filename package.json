@@ -42,8 +42,10 @@
 		"prepare": "lefthook install"
 	},
 	"dependencies": {
+		"@gsap/react": "^2.1.2",
 		"@traveler-app/env": "workspace:*",
 		"dotenv": "catalog:",
+		"gsap": "^3.15.0",
 		"lucide-react": "^1.55.0",
 		"resend": "^6.28.1",
 		"zod": "catalog:"
