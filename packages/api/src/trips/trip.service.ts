@@ -45,30 +45,68 @@ export async function tripService({
 		},
 	});
 
+	// const trips = await prisma.trip.findMany({
+	// 	where: {
+	// 		OR: [{ ownerID: userId }, { members: { some: { userId } } }],
+	// 	},
+	// 	orderBy: { updatedAt: "desc" },
+	// 	include: {
+	// 		items: { select: { done: true } },
+	// 		members: { where: { userId }, select: { role: true } },
+	// 	},
+	// });
+
+	// return trips.map(({ items, members, ...trip }) => ({
+	// 	...trip,
+	// 	stops: items.length,
+	// 	done: items.filter((item) => item.done).length,
+	// 	role: members[0]?.role ?? (trip.ownerId === userId ? "owner" : "viewer"),
+	// }));
+
 	return trip;
 }
+
+// export async function getTripsService({ userId }: { userId: string }) {
+// 	const trips = await prisma.trip.findMany({
+// 		where: {
+// 			OR: [
+// 				{
+// 					ownerId: userId,
+// 				},
+// 				{
+// 					members: {
+// 						some: {
+// 							userId,
+// 						},
+// 					},
+// 				},
+// 			],
+// 		},
+// 		orderBy: {
+// 			updatedAt: "desc",
+// 		},
+// 	});
+// 	return trips;
+// }
 
 export async function getTripsService({ userId }: { userId: string }) {
 	const trips = await prisma.trip.findMany({
 		where: {
-			OR: [
-				{
-					ownerId: userId,
-				},
-				{
-					members: {
-						some: {
-							userId,
-						},
-					},
-				},
-			],
+			OR: [{ ownerId: userId }, { members: { some: { userId } } }],
 		},
-		orderBy: {
-			updatedAt: "desc",
+		orderBy: { updatedAt: "desc" },
+		include: {
+			items: { select: { done: true } },
+			members: { where: { userId }, select: { role: true } },
 		},
 	});
-	return trips;
+
+	return trips.map(({ items, members, ...trip }) => ({
+		...trip,
+		stops: items.length,
+		done: items.filter((item) => item.done).length,
+		role: members[0]?.role ?? (trip.ownerId === userId ? "owner" : "viewer"),
+	}));
 }
 
 export async function getTripService({
