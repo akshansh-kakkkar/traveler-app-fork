@@ -14,7 +14,7 @@ export default function Navbar() {
 
 			tl.from(".navbar-logo", {
 				y: -18,
-				scale : 0.9,
+				scale: 0.9,
 				opacity: 0,
 				duration: 0.65,
 			})

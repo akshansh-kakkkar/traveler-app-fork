@@ -48,6 +48,7 @@ export function createAuth() {
     account: {
       accountLinking: {
         enabled: true,
+        trustedProviders: ["google"],
       },
     },
     user: {
