@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Redirect, Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import { cn, useThemeColor } from "heroui-native";
-import { ActivityIndicator, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { authClient } from "@/lib/auth-client";
 import { TAB_BAR_GAP, TAB_BAR_HEIGHT } from "@/lib/tab-bar";
@@ -42,9 +42,9 @@ export default function TabLayout() {
 
 	const insets = useSafeAreaInsets();
 
-	const { data: session, isPending } = authClient.useSession();
-	if (isPending) return <ActivityIndicator />;
-	if (!session) return <Redirect href="/(auth)/sign-in" />;
+	// const { data: session, isPending } = authClient.useSession();
+	// if (isPending) return <ActivityIndicator />;
+	// if (!session) return <Redirect href="/(auth)/sign-in" />;
 
 	return (
 		<Tabs
@@ -92,17 +92,8 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="plan"
-				options={{
-					title: "Itinerary",
-					tabBarIcon: ({ focused }) => (
-						<TabIcon
-							name="calendar-outline"
-							focusedName="calendar"
-							focused={focused}
-						/>
-					),
-				}}
+				name="create"
+				options={{ tabBarButton: () => <CreateButton /> }}
 			/>
 			<Tabs.Screen
 				name="trips"
@@ -113,6 +104,35 @@ export default function TabLayout() {
 					),
 				}}
 			/>
+			<Tabs.Screen
+				name="profile"
+				options={{
+					title: "My profile",
+					tabBarIcon: ({ focused }) => (
+						<TabIcon
+							name="person-outline"
+							focusedName="person"
+							focused={focused}
+						/>
+					),
+				}}
+			/>
 		</Tabs>
+	);
+}
+
+function CreateButton() {
+	const { data: session } = authClient.useSession();
+	const inkColor = useThemeColor("accent-foreground");
+
+	return (
+		<View className="flex-1 items-center">
+			<Pressable
+				onPress={() => router.push(session ? "/plan" : "/(auth)/sign-in")}
+				className="-mt-4.5 h-18 w-18 items-center justify-center rounded-full bg-accent shadow-lg active:opacity-80"
+			>
+				<Ionicons name="add-outline" size={34} color={inkColor} />
+			</Pressable>
+		</View>
 	);
 }
