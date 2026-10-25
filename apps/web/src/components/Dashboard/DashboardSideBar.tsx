@@ -36,8 +36,11 @@ const SidebarOptions = [
 		route : "/create-trip"
 	}
 ]
+type DashboardSideBarProps = {
+	onExpandedChange : (expanded : boolean) => void;
+}
 
-export default function DashboardSideBar() {
+export default function DashboardSideBar({onExpandedChange} : DashboardSideBarProps) {
 	const pathname = useLocation();
 
 	const router = useRouter();
@@ -52,20 +55,26 @@ export default function DashboardSideBar() {
 		}
 	}
 	
-
-
 	const [sideBarSize, setSizeBarSize] = useState(false);
 	const [isHovered, setIsHovered] = useState(false);
 
 	const isExpanded = sideBarSize || isHovered;
 
 	const sideBarSizeToggle = () => {
-		setSizeBarSize((prev)=>!prev)
+		setSizeBarSize((prev)=>{
+			const next = !prev;
+			onExpandedChange(next);
+			return next;
+		})
 	}
 	return (
 		<div 
-		 onMouseEnter={()=> setIsHovered(true)}
-		 onMouseLeave={()=> setIsHovered(false)}
+		 onMouseEnter={()=> {
+			setIsHovered(true)
+		}}
+		 onMouseLeave={()=> {
+			setIsHovered(false)
+		 }}
 
 		 className={`bg-[#12271A] ${sideBarSize ? "hover:w-70" : ""} h-screen py-4 fixed flex justify-between flex-col ${isExpanded ? "w-70" : "w-20"} transition-[width] ease-in-out duration-300`}>
 
@@ -78,8 +87,9 @@ export default function DashboardSideBar() {
 				</div>
 				<button
 				type="button"
+				onClick={sideBarSizeToggle}
 				className={`${isExpanded ? "block" : "hidden"} border-dashed border-2 text-[#CFE84A] p-2 rounded-xl cursor-pointer`}>
-					<Pin size={18} onClick={sideBarSizeToggle} className={`transition-all duration-300  ${sideBarSize ? "rotate-45" : ""}`} />
+					<Pin size={18}  className={`transition-all duration-300  ${sideBarSize ? "rotate-45" : ""}`} />
 				</button>
 			</div>
 
