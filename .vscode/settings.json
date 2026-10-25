@@ -8,7 +8,7 @@
 		"source.fixAll.biome": "explicit",
 		"source.organizeImports.biome": "explicit"
 	},
-	"[typescript]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[typescript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
 	"[typescriptreact]": { "editor.defaultFormatter": "rvest.vs-code-prettier-eslint" },
 	"[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
 	"[json]": { "editor.defaultFormatter": "biomejs.biome" },
