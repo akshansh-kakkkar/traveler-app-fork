@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import DashboardSideBar from "@/components/Dashboard/DashboardSideBar";
 import { trpc } from "@/utils/trpc";
@@ -32,9 +33,12 @@ function RouteComponent() {
 				<div className="flex w-full justify-center text-center">
 					<Link
 						to={"/create-trip"}
-						className="mx-12 my-4 w-full cursor-pointer rounded-2xl bg-[#12271A] py-24 font-bold text-4xl uppercase transition-all duration-300 hover:scale-95"
+						className="inset-0 mx-12 my-4 flex w-full cursor-pointer items-center justify-center gap-8 rounded-2xl bg-[#12271A] py-24 text-center font-bold text-4xl uppercase transition-all duration-300 hover:-translate-y-1 hover:scale-99"
 					>
 						Plan a Trip
+						<span>
+							<Plus size={36} strokeWidth={4} />
+						</span>
 					</Link>
 				</div>
 			</div>
