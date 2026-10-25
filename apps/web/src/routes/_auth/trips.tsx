@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
 	ArrowRight,
 	ArrowUpRight,
@@ -43,7 +43,7 @@ function RouteComponent() {
 								My Trips<span className="text-[#7A9B70]">.</span>
 							</h1>
 							<p className="mt-3 max-w-lg text-[#738076] text-sm leading-6">
-								Every journey starts. osmewhere. Keep your plans organized in
+								Every journey starts. somewhere. Keep your plans organized in
 								one place.
 							</p>
 						</div>
@@ -145,7 +145,9 @@ function RouteComponent() {
 					filteredTrips.length > 0 && (
 						<div className="mt-6 grid grid-cols-3 gap-5">
 							{filteredTrips.map((trip) => (
-								<article
+								<Link
+									to="/trips/$tripId"
+									params={{ tripId: trip.id }}
 									key={trip.id}
 									className="group hover:border-[#B8CDB5]] flex min-h-56 flex-col rounded-2xl border border-[#E0E6DD] bg-white p-6 transition duration-200 hover:-translate-y-1 hover::shadow-lg hover:shadow-[#203B2810]"
 								>
@@ -194,7 +196,7 @@ function RouteComponent() {
 											</span>
 										</div>
 									)}
-								</article>
+								</Link>
 							))}
 						</div>
 					)}
