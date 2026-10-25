@@ -1,122 +1,63 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import type { AppRouter } from "@traveler-app/api/routers/index";
-import { PlaceCategory } from "@traveler-app/db/enums";
-import type { inferRouterOutputs } from "@trpc/server";
-import { useMemo, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import { Container } from "@/components/container";
+import { useQuery } from "@tanstack/react-query";
+import { router } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { authClient } from "@/lib/auth-client";
+import { useTabBarSpace } from "@/lib/tab-bar";
 import { trpc } from "@/utils/trpc";
 
-type Place = inferRouterOutputs<AppRouter>["place"]["list"]["places"][number];
-
 export default function Discover() {
-	const [category, setCategory] = useState<PlaceCategory | undefined>(
-		undefined,
-	);
+	const { data: session, isPending: sessionPending } = authClient.useSession();
+	const tripsQuery = useQuery({
+		...trpc.trips.getAll.queryOptions(),
+		enabled: !!session,
+	});
 
-	const categories = Object.values(PlaceCategory);
+	const insets = useSafeAreaInsets();
+	const tabBarSpace = useTabBarSpace();
 
-	const placesQuery = useInfiniteQuery(
-		trpc.place.list.infiniteQueryOptions(
-			{
-				cityId: "kl",
-				includeUnverified: true,
-				category,
-			},
-			{ getNextPageParam: (lastPage) => lastPage.nextCursor },
-		),
-	);
-
-	const allPlaces = useMemo(
-		() => placesQuery.data?.pages.flatMap((page) => page.places) ?? [],
-		[placesQuery.data],
-	);
-
-	return (
-		<Container className="p-6" isScrollable={false}>
-			<Text className="mb-4 text-center text-lg">
-				{allPlaces.length} places in Kuala Lumpur
-			</Text>
-
-			<FlatList
-				data={categories}
-				keyExtractor={(item) => item}
-				horizontal={true}
-				className="flex-1"
-				renderItem={({ item }) => (
-					<CategoryCard
-						category={item}
-						isSelected={category === item}
-						onPress={() => setCategory(category === item ? undefined : item)}
-					/>
-				)}
-			/>
-
-			{placesQuery.isPending && <ActivityIndicator />}
-
-			{placesQuery.error && (
-				<Text className="text-red-500">{placesQuery.error.message}</Text>
-			)}
-
-			<FlatList
-				data={allPlaces}
-				keyExtractor={(place) => place.id}
-				renderItem={({ item }) => <PlaceCard place={item} />}
-				className="flex-1"
-				onEndReached={() => {
-					if (placesQuery.hasNextPage && !placesQuery.isFetchingNextPage)
-						placesQuery.fetchNextPage();
-				}}
-				ListFooterComponent={
-					placesQuery.isFetchingNextPage ? <ActivityIndicator /> : null
-				}
-			/>
-		</Container>
-	);
-}
-
-function PlaceCard({ place }: { place: Place }) {
-	// const indoorLabel =
-	// 	place.indoor === null ? "Unknown" : place.indoor ? "Indoor" : "Outdoor";
-
-	return (
-		<View className="mb-4 w-full rounded-lg border border-gray-300 p-4">
-			<View className="flex-row items-center justify-between">
-				<Text className="flex-1 font-semibold text-lg">{place.name}</Text>
-				{!place.verified && (
-					<Text className="rounded bg-red-100 px-2 py-1 text-red-700 text-xs">
-						UNVERIFIED
-					</Text>
-				)}
+	if (sessionPending || (session && tripsQuery.isPending)) {
+		return (
+			<View className="flex-1 items-center justify-center bg-background">
+				<ActivityIndicator />
 			</View>
+		);
+	}
 
-			<Text className="text-gray-600">{place.category}</Text>
-			<Text className="text-gray-600">
-				{place.indoor ? "Indoor" : "Outdoor"}
-			</Text>
-			<Text className="text-gray-600">
-				Labels: {place.labels.join(", ") || "None"}
-			</Text>
-		</View>
+	const emptyState = !session ? (
+		<EmptyState
+			icon="person-circle-outline"
+			title="Sign in to see your route"
+			message="Your trip is day by day route shows up here"
+			actionLabel="Sign up"
+			onAction={() => router.push("/(auth)/sign-in")}
+		/>
+	) : tripsQuery.isError ? (
+		<EmptyState
+			icon="cloud-offline-outline"
+			tone="error"
+			title="Couldn't load your trips"
+			message="Check your connection, then try again"
+			actionLabel="Try again"
+			onAction={() => tripsQuery.refetch()}
+		/>
+	) : (
+		<EmptyState
+			icon="map-outline"
+			title="No trip coming up"
+			message="Plan one and its route will show up here."
+			actionLabel="Plan a trip"
+			onAction={() => router.push("/plan")}
+		/>
 	);
-}
 
-function CategoryCard({
-	category,
-	isSelected,
-	onPress,
-}: {
-	category: PlaceCategory;
-	isSelected: boolean;
-	onPress: () => void;
-}) {
 	return (
-		<TouchableOpacity
-			className={`mr-2 mb-4 rounded-xl border p-4 ${isSelected ? "border-amber-400" : "border-gray-300"}`}
-			onPress={onPress}
+		<View
+			className="flex-1 bg-background px-5"
+			style={{ paddingTop: insets.top, paddingBottom: tabBarSpace }}
 		>
-			<Text className="font-semibold text-lg">{category}</Text>
-		</TouchableOpacity>
+			{emptyState}
+		</View>
 	);
 }

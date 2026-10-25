@@ -9,7 +9,7 @@ type Props = {
 	durationMin: number;
 	title: string;
 	description?: string;
-	category: PlaceCategory;
+	category?: PlaceCategory;
 	done: boolean;
 	isNext?: boolean;
 	onToggle: () => void; // tap the circle
@@ -93,7 +93,7 @@ export function ItemCard({
 						{description}
 					</Text>
 				) : null}
-				<CategoryTag category={category} />
+				{category && <CategoryTag category={category} />}
 			</View>
 
 			{/* check circle */}

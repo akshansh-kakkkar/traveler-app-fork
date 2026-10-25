@@ -114,6 +114,16 @@ export async function getItineraryItemServices({
 		orderBy: {
 			position: "asc",
 		},
+		include: {
+			place: {
+				select: {
+					name: true,
+					category: true,
+					latitude: true,
+					longitude: true,
+				},
+			},
+		},
 	});
 	return items;
 }
