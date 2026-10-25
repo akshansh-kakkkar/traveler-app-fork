@@ -45,11 +45,8 @@ export async function tripService({
 		},
 	});
 
-
 	return trip;
 }
-
-
 
 export async function getTripsService({ userId }: { userId: string }) {
 	const trips = await prisma.trip.findMany({
