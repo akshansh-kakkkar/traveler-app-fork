@@ -73,7 +73,7 @@ export const generateItineraryProcedure = protectedProcedure
 
 		return prisma.trip.create({
 			data: {
-				name: `${input.days} days in Kuala Lumpur`,
+				name: `${input.days} ${input.days === 1 ? "day" : "days"} in Kuala Lumpur`,
 				ownerId: userId,
 				startDate: input.startDate ?? null,
 				endDate,
