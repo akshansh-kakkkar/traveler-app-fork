@@ -6,6 +6,8 @@ type DateInput = string | Date | null | undefined;
 
 export type TripStatus = "upcoming" | "in-progress" | "past";
 
+type DatedTrip = { startDate: DateInput; endDate: DateInput };
+
 function startOfDay(date: Date): number {
 	return new Date(
 		date.getFullYear(),
@@ -96,4 +98,19 @@ export function formatDateRange(start: DateInput, end: DateInput): string {
 		return `${s.getDate()}-${e.getDate()} ${sMonth}`;
 	}
 	return `${s.getDate()} ${sMonth} - ${e.getDate()} ${eMonth}`;
+}
+
+export function pickFeaturedTrip<T extends DatedTrip>(
+	trips: readonly T[],
+	now = new Date(),
+): T | undefined {
+	const timeOf = (trip: T) =>
+		trip.startDate ? new Date(trip.startDate).getTime() : Number.MAX_VALUE;
+	const byStart = [...trips].sort((a, b) => timeOf(a) - timeOf(b));
+	const withStatus = (status: TripStatus) =>
+		byStart.find(
+			(trip) => tripStatus(trip.startDate, trip.endDate, now) === status,
+		);
+
+	return withStatus("in-progress") ?? withStatus("upcoming");
 }
