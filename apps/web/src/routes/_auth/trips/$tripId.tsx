@@ -46,6 +46,11 @@ function RouteComponent() {
 	}
 
 	const trip = tripsQuery.data;
+	const itineraryQuery = useQuery(
+		trpc.itinerary.getAll.queryOptions({
+			id : tripId
+		})
+	)
 
 	return (
 		<div className="min-h-screen bg-[#E4EfE2] px-10 py-10 text-[#12271A]">
@@ -77,24 +82,57 @@ function RouteComponent() {
 						</div>
 						<p className="mt-4 font-medium">
 							{trip.startDate
-								? new Date(trip.startDate).toLocaleDateString()
+								? `Starts : ${new Date(trip.startDate).toLocaleDateString()}`
 								: "Start date not set"}
 						</p>
 						<p>
 							{trip.endDate
-								? `Until ${new Date(trip.endDate).toLocaleDateString()}`
+								? `Ends : ${new Date(trip.endDate).toLocaleDateString()}`
 								: "End Date not set"}
 						</p>
 					</div>
 					<div className="rounded-2xl border border-[#D7E1D4] bg-white p-6">
-						<div className="flex items-center gap-2 text-[#738076] text-sm">
-							<MapPinIcon size={18} />
-							Itinerary
+						<div className="flex items-center justify-between">
+							<div className="flex items-center gap-2 text-sm text-[#738076]">
+								<MapPinIcon size={18} />
+								Itinerary
+							</div>
+							<span className="rounded-full bg-[#E8EFE3] px-3 py-1 text-xs font-medium text-[#426449]">
+								{itineraryQuery.data?.length ?? 0} activities
+							</span>
 						</div>
-						<p className="mt-4 font-medium">Ready to start planning?</p>
-						<p className="mt-1 text-[#738076] text-sm">
-							Your actvities and places can be organized here next.
-						</p>
+						{itineraryQuery.isPending ? (
+							<p className="mt-5 text-sm text-[#738076]">Loading activities...</p>
+						) :  itineraryQuery.isError || !itineraryQuery.data ? (
+							<p className="mt-5 text-sm text-red-600">Couldn't load itinerary activities.</p>
+						) : itineraryQuery.data.length === 0 ? (
+							<div className="mt-5">
+								<p className="font-medium">Your itinerary is empty.</p>
+								<p>Start adding activities to organize your journey.</p>
+							</div>
+						) : (
+							<div className="mt-5 space-y-3">
+								{itineraryQuery.data.map((item)=>(
+									<div
+									key={item.id}
+									className="rounded-xl border border-[#E0E6DD] p-4">
+										<div>
+											<h3 className="font-semibold text-[#12271A]">{item.title}</h3>
+										</div>
+										{item.place && (
+											<p className="mt-1 text-xs text-[#738076]">{item.place.name}</p>
+										)}
+										{item.notes && (
+											<p className="mt-2 text-sm text-[#607565]">{item.notes}</p>
+										)}
+
+										<span>
+											{item.done ? "Completed" : "Planned"}
+										</span>
+									</div>
+								))}
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

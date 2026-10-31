@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
-	ArrowRight,
 	ArrowUpRight,
 	CalendarDays,
 	Compass,
@@ -36,7 +35,7 @@ function RouteComponent() {
 				<div className="mx-auto max-w-7xl">
 					<header className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
 						<div>
-							<p className="flex-row items-end justify-between gap-5 font-semibold text-[#738076] text-sx">
+							<p className="flex-row items-end justify-between gap-5 font-semibold text-[#738076] text-xs">
 								Your Collection
 							</p>
 							<h1 className="mt-2 font-semibold text-4xl text-[#12271A] tracking-tight">
@@ -99,7 +98,7 @@ function RouteComponent() {
 							<button
 								type="button"
 								onClick={() => void tripsQuery.refetch()}
-								className="hover:bg-[#F6F7F1]] mt-5 inline-flex items-center gap-2 rounded-lg border border-[#DDE4D9] px-4 py-2 font-medium text-sm"
+								className="hover:bg-[#F6F7F1] mt-5 inline-flex items-center gap-2 rounded-lg border border-[#DDE4D9] px-4 py-2 font-medium text-sm"
 							>
 								<RefreshCw size={15} />
 							</button>
@@ -122,7 +121,7 @@ function RouteComponent() {
 										? "No matching trips"
 										: "Your next chapter starts here"}
 								</h3>
-								<p className="mt-2 max-w-sm text-[#7388076] text-sm leading-6">
+								<p className="mt-2 max-w-sm text-[#738076] text-sm leading-6">
 									{search
 										? "Try another search term to find your trip"
 										: "Create your first trip and bring your travel plans together in one place."}
@@ -149,7 +148,7 @@ function RouteComponent() {
 									to="/trips/$tripId"
 									params={{ tripId: trip.id }}
 									key={trip.id}
-									className="group hover:border-[#B8CDB5]] flex min-h-56 flex-col rounded-2xl border border-[#E0E6DD] bg-white p-6 transition duration-200 hover:-translate-y-1 hover::shadow-lg hover:shadow-[#203B2810]"
+									className="group hover:border-[#B8CDB5] flex min-h-56 flex-col rounded-2xl border border-[#E0E6DD] bg-white p-6 transition duration-200 hover:-translate-y-1 hover::shadow-lg hover:shadow-[#203B2810]"
 								>
 									<div className="flex items-start justify-between gap-3">
 										<div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E8EFE3] text-[#426449]">
@@ -164,10 +163,10 @@ function RouteComponent() {
 										{trip.name}
 									</h3>
 									<p className="mt-2 line-clamp-2 flex-1 text-[#748076] text-sm leading-6">
-										{trip.description || "No description aadded yet."}
+										{trip.description || "No description added yet."}
 									</p>
 									{(trip.startDate || trip.endDate) && (
-										<div className="mt-5 flex items-center gap-2 border-[EDF0E9] border-t pt-4 text-[#66786A] text-xs">
+										<div className="mt-5 flex items-center gap-2 border-[#EDF0E9] border-t pt-4 text-[#66786A] text-xs">
 											<CalendarDays size={15} />
 											<span>
 												{trip.startDate
