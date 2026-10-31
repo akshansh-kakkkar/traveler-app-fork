@@ -2,18 +2,21 @@ import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Tripoverview } from "@/components/overview/Tripoverview";
+// import { TripOverview } from "@/components/overview/TripOverview";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { authClient } from "@/lib/auth-client";
 import { useTabBarSpace } from "@/lib/tab-bar";
+import { pickFeaturedTrip } from "@/lib/trip-dates";
 import { trpc } from "@/utils/trpc";
 
+// overview of the trip in progress, or the next one coming up
 export default function Discover() {
 	const { data: session, isPending: sessionPending } = authClient.useSession();
 	const tripsQuery = useQuery({
 		...trpc.trips.getAll.queryOptions(),
 		enabled: !!session,
 	});
-
 	const insets = useSafeAreaInsets();
 	const tabBarSpace = useTabBarSpace();
 
@@ -25,12 +28,18 @@ export default function Discover() {
 		);
 	}
 
+	const featured = pickFeaturedTrip(tripsQuery.data ?? []);
+
+	if (session && featured) {
+		return <Tripoverview key={featured.id} tripId={featured.id} />;
+	}
+
 	const emptyState = !session ? (
 		<EmptyState
 			icon="person-circle-outline"
 			title="Sign in to see your route"
-			message="Your trip is day by day route shows up here"
-			actionLabel="Sign up"
+			message="Your trip's day by day route shows up here."
+			actionLabel="Sign in"
 			onAction={() => router.push("/(auth)/sign-in")}
 		/>
 	) : tripsQuery.isError ? (
@@ -38,7 +47,7 @@ export default function Discover() {
 			icon="cloud-offline-outline"
 			tone="error"
 			title="Couldn't load your trips"
-			message="Check your connection, then try again"
+			message="Check your connection, then try again."
 			actionLabel="Try again"
 			onAction={() => tripsQuery.refetch()}
 		/>
