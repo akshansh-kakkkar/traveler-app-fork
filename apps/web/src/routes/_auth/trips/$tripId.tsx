@@ -19,7 +19,7 @@ function RouteComponent() {
 			<main className="min-h-screen bg-[#E4EFE2] p-8">
 				<div className="mx-auto max-w-4xl animate-pulse space-y-4">
 					<div className="h-5 w-28 rounded bg-[#cad7C8]" />
-					<div className="rrounded h-12 w-2/3 bg-[#CAD7C8]" />
+					<div className="h-12 w-2/3 rounded bg-[#CAD7C8]" />
 					<div className="h-40 rounded-2xl bg-[#CAD7C8]" />
 				</div>
 			</main>
@@ -57,7 +57,7 @@ function RouteComponent() {
 					<ArrowLeft size={17} />
 					All trips
 				</Link>
-				<div className="borderr-[#CAD7C8] mt-10 border-b pb-8">
+				<div className="mt-10 border-[#CAD7C8] border-b pb-8">
 					<p className="font-semibold text-[#748076] text-xs uppercase tracking-tight">
 						Your journey
 					</p>

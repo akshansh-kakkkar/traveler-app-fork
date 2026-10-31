@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import DashboardSideBar from "@/components/Dashboard/DashboardSideBar";
 import { trpc } from "@/utils/trpc";
-export const Route = createFileRoute("/_auth/trips")({
+export const Route = createFileRoute("/_auth/trips/")({
 	component: RouteComponent,
 });
 
