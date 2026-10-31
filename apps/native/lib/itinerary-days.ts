@@ -1,7 +1,7 @@
 type DateInput = string | Date | null | undefined;
 
 type Dated = { startAt: DateInput };
-// type Coordinate = { latitude: number; longitude: number };
+type Coordinate = { latitude: number; longitude: number };
 
 export type DayGroup<T> = {
 	key: string;
@@ -68,4 +68,46 @@ export function durationMinutes(start: DateInput, end: DateInput): number {
 	if (!start || !end) return 0;
 	const diff = new Date(end).getTime() - new Date(start).getTime();
 	return Math.max(0, Math.round(diff / 60_000));
+}
+
+export type PinState = "done" | "next" | "todo";
+
+export type RoutePin = {
+	id: string;
+	latitude: number;
+	longitude: number;
+	number: number;
+	state: PinState;
+};
+
+type PinnableStop = {
+	id: string;
+	done: boolean;
+	place: Coordinate | null;
+};
+
+export function routePins(stops: readonly PinnableStop[]): RoutePin[] {
+	const nextId = stops.find((stop) => !stop.done)?.id;
+
+	return stops.flatMap((stop, index) => {
+		if (!stop.place) return [];
+
+		function pinState(stop: Stop, nextId: string | undefined): PinState {
+			if (stop.done) return "done";
+			if (stop.id === nextId) return "next";
+			return "todo";
+		}
+
+		const state = pinState(stop, nextId);
+
+		return [
+			{
+				id: stop.id,
+				latitude: stop.place.latitude,
+				longitude: stop.place.longitude,
+				number: index + 1,
+				state,
+			},
+		];
+	});
 }
