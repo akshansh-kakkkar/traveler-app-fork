@@ -21,6 +21,13 @@ export const Route = createFileRoute("/_auth/trips/$tripId")({
 	component: RouteComponent,
 });
 
+function toLocaleDateString(value: Date | string | null | undefined) {
+	if (!value) return "";
+	const date = new Date(value);
+	const offset = date.getTimezoneOffset() * 60000;
+	return new Date(date.getTime() - offset).toISOString().slice(0, 16)
+}
+
 function RouteComponent() {
 	const itinerartContainerRef = useRef<HTMLDivElement>(null);
 	const flipStateRef = useRef<Flip.FlipState | null>(null);
@@ -67,6 +74,24 @@ function RouteComponent() {
 	);
 
 	const updateActivity = useMutation(
+		trpc.itinerary.update.mutationOptions({
+			onSuccess: async () => {
+				await queryClient.invalidateQueries({
+					queryKey: trpc.itinerary.getAll.queryKey({
+						id: tripId,
+					}),
+				});
+
+				setEditingIdActivity(null);
+				setTitle("");
+				setNotes("");
+				setStartAt("");
+				setEndAt("");
+				setShowActivityForm(false);
+			},
+		}),
+	);
+	const toggleActivity = useMutation(
 		trpc.itinerary.update.mutationOptions({
 			onSuccess: async () => {
 				await queryClient.invalidateQueries({
@@ -149,18 +174,39 @@ function RouteComponent() {
 	function handleCreateActivity(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		if (!title.trim()) return;
-		createActivity.mutate({
-			tripId,
+
+		const payload = {
 			title: title.trim(),
 			notes: notes.trim() || undefined,
 			startAt: startAt ? new Date(startAt) : undefined,
 			endAt: endAt ? new Date(endAt) : undefined,
-		});
+		}
+		if (editingIdActivity) {
+			const item = itineraryQuery.data?.find(
+				(activity) => activity.id === editingIdActivity,
+			);
+
+			if (!item) return;
+
+			updateActivity.mutate({
+				id: editingIdActivity,
+				...payload,
+				version: item.version,
+			});
+
+		}
+		else {
+			createActivity.mutate({
+				tripId,
+				...payload,
+			})
+
+		}
 	}
 	function handleToggleActivity(
 		item: NonNullable<typeof itineraryQuery.data>[number],
 	) {
-		updateActivity.mutate({
+		toggleActivity.mutate({
 			id: item.id,
 			done: !item.done,
 			version: item.version,
@@ -174,10 +220,8 @@ function RouteComponent() {
 		setShowActivityForm(true);
 		setTitle(item.title);
 		setNotes(item.notes ?? "");
-		setStartAt(
-			item.startAt ? new Date(item.startAt).toISOString().slice(0, 16) : "",
-		);
-		setEndAt(item.endAt ? new Date(item.endAt).toISOString().slice(0, 16) : "");
+		setStartAt(toLocaleDateString(item.startAt));
+		setEndAt(toLocaleDateString(item.endAt));
 	}
 
 	function handleReorderActivity(index: number, direction: "up" | "down") {
@@ -331,17 +375,17 @@ function RouteComponent() {
 									/>
 								</div>
 
-								{createActivity.isError && (
+								{(createActivity.isError || updateActivity.isError) && (
 									<p className="text-red-600 text-sm">
 										Failed to create activity. Please try again.
 									</p>
 								)}
 								<button
 									type="submit"
-									disabled={createActivity.isPending || !title.trim()}
+									disabled={createActivity.isPending || updateActivity.isPending || !title.trim()}
 									className="w-full rounded-xl bg-[#12271A] px-4 py-3 font-medium text-sm text-white transition hover:bg-[#66875D] disabled:opacity-50"
 								>
-									{createActivity.isPending ? "Adding..." : "Save activity"}
+									{createActivity.isPending || updateActivity.isPending ? "Saving..." : editingIdActivity ? "Update activity" : "Save activity"}
 								</button>
 							</form>
 						)}
@@ -414,7 +458,7 @@ function RouteComponent() {
 										<button
 											type="button"
 											onClick={() => handleToggleActivity(item)}
-											disabled={updateActivity.isPending}
+											disabled={toggleActivity.isPending}
 											className="ml-3 font-medium text-[#66875D] text-xs hover:underline disabled:opacity-50"
 										>
 											{item.done ? "Mark as planned" : "Mark as completed"}

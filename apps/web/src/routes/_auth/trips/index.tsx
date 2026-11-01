@@ -16,16 +16,38 @@ export const Route = createFileRoute("/_auth/trips/")({
 	component: RouteComponent,
 });
 
+type TripStatus = "upcoming" | "ongoing" | "completed"
+
+function getTripStatus(
+	startDate: Date | string | null,
+	endDate: Date | string | null,
+): TripStatus {
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
+	if (startDate && new Date(startDate) > today) {
+		return "upcoming";
+	}
+
+	if (endDate && new Date(endDate) < today) {
+		return "completed";
+	}
+	return "ongoing"
+}
+
 function RouteComponent() {
 	const navigate = useNavigate();
+	const [statusFilter, setStatusFilter] = useState<"all" | "upcoming" | "ongoing" | "completed">("all");
 	const [search, setSearch] = useState("");
 	const [sideBarPinned, setSideBarPinned] = useState(false);
 	const tripsQuery = useQuery(trpc.trips.getAll.queryOptions());
 	const trips = tripsQuery.data ?? [];
-	const filteredTrips = trips.filter((trip) =>
-		trip.name.toLowerCase().includes(search.trim().toLowerCase()),
-	);
+	const filteredTrips = trips.filter((trip) => {
+		const matchesSearch = trip.name.toLowerCase().includes(search.trim().toLowerCase());
+		const status = getTripStatus(trip.startDate, trip.endDate);
+		const matchesStatus = statusFilter === "all" || status === statusFilter;
 
+		return matchesSearch && matchesStatus;
+	})
 	return (
 		<div className="relative flex h-screen bg-[#E4EFE2]">
 			<DashboardSideBar onExpandedChange={setSideBarPinned} />
@@ -55,7 +77,6 @@ function RouteComponent() {
 							Create Trip
 						</button>
 					</header>
-
 					<div className="mt-10">
 						<div className="flex flex-row items-center justify-between gap-4 border-[#DDE4D9] pb-5">
 							<div>
@@ -78,6 +99,22 @@ function RouteComponent() {
 								className="min-w-0 flex-1 bg-transparent text-[#12271A] text-sm outline-none placeholder:text-[#9AA69B]"
 							/>
 						</label>
+						<div className="mt-5 flex flex-wrap gap-2">
+							{[
+								{ label: "All trips", value: "all" },
+								{ label: "Upcoming", value: "upcoming" },
+								{ label: "Ongoing", value: "ongoing" },
+								{ label: "Completed", value: "completed" }
+							].map((filter) => (
+								<button
+									key={filter.value}
+									type="button"
+									className={`rounded-xl px-4 py-2 text-sm font-medium transition ${statusFilter === filter.value ? "bg-[#17291E] text-white" : "border border-[#DDE4D9] bg-white text-[#66786A] hover:bg-[#F1F5ED]"}`}
+									onClick={() => setStatusFilter(filter.value as typeof statusFilter)}>
+									{filter.label}
+								</button>
+							))}
+						</div>
 					</div>
 					{tripsQuery.isPending && (
 						<div className="grid grid-cols-3 gap-5 py-8">
@@ -104,7 +141,6 @@ function RouteComponent() {
 							</button>
 						</div>
 					)}
-
 					{!tripsQuery.isPending &&
 						!tripsQuery.isError &&
 						filteredTrips.length === 0 && (
@@ -142,7 +178,7 @@ function RouteComponent() {
 				{!tripsQuery.isPending &&
 					!tripsQuery.isError &&
 					filteredTrips.length > 0 && (
-						<div className="mt-6 grid grid-cols-3 gap-5">
+						<div className="mt-6 grid grid-cols-3 gap-5 mx-16">
 							{filteredTrips.map((trip) => (
 								<Link
 									to="/trips/$tripId"
@@ -171,26 +207,26 @@ function RouteComponent() {
 											<span>
 												{trip.startDate
 													? new Date(trip.startDate).toLocaleDateString(
-															undefined,
-															{
-																day: "numeric",
-																month: "short",
-																year: "numeric",
-																timeZone: "UTC",
-															},
-														)
+														undefined,
+														{
+															day: "numeric",
+															month: "short",
+															year: "numeric",
+															timeZone: "UTC",
+														},
+													)
 													: "Date not set"}
 
 												{trip.endDate
 													? new Date(trip.endDate).toLocaleDateString(
-															undefined,
-															{
-																day: "numeric",
-																month: "short",
-																year: "numeric",
-																timeZone: "UTC",
-															},
-														)
+														undefined,
+														{
+															day: "numeric",
+															month: "short",
+															year: "numeric",
+															timeZone: "UTC",
+														},
+													)
 													: "Ongoing"}
 											</span>
 										</div>
