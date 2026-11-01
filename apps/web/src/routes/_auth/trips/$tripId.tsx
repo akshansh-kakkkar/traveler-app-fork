@@ -25,7 +25,7 @@ function toLocaleDateString(value: Date | string | null | undefined) {
 	if (!value) return "";
 	const date = new Date(value);
 	const offset = date.getTimezoneOffset() * 60000;
-	return new Date(date.getTime() - offset).toISOString().slice(0, 16)
+	return new Date(date.getTime() - offset).toISOString().slice(0, 16);
 }
 
 function RouteComponent() {
@@ -180,7 +180,7 @@ function RouteComponent() {
 			notes: notes.trim() || undefined,
 			startAt: startAt ? new Date(startAt) : undefined,
 			endAt: endAt ? new Date(endAt) : undefined,
-		}
+		};
 		if (editingIdActivity) {
 			const item = itineraryQuery.data?.find(
 				(activity) => activity.id === editingIdActivity,
@@ -193,14 +193,11 @@ function RouteComponent() {
 				...payload,
 				version: item.version,
 			});
-
-		}
-		else {
+		} else {
 			createActivity.mutate({
 				tripId,
 				...payload,
-			})
-
+			});
 		}
 	}
 	function handleToggleActivity(
@@ -295,9 +292,24 @@ function RouteComponent() {
 						{trip.name}
 						<span className="text-[#7A9B70]">.</span>
 					</h1>
-					<p className="mt-4 max-w-2xl whitespace-pre-wrap text-[#607565] text-sm leading-7">
-						{trip.description || "No description added yet."}
-					</p>
+					{
+						trip.stops > 0 && (
+							<div className="mt-5">
+								<div className="mb-2 flex items-center justify-between text-xs">
+									<span className="font-medium text-[#738076]">
+										Itinerary Progress
+									</span>
+									<span className="font-semibold text-[#426449]">
+										{trip.done} / {trip.stops} completed
+									</span>
+								</div>
+								<div className="h-2 overflow-hidden rounded-full bg-[#E8EFE3]">
+									<div className="h-full rounded-full bg-[#7A9B70] transition-all duration-500"
+									style={{ width : `${(trip.done / trip.stops) * 100}%` }} />
+								</div>
+							</div>
+						)
+					}
 				</div>
 				<div className="mt-8 grid grid-cols-2 gap-4">
 					<div className="rounded-2xl border border-[#D7E1D4] bg-white p-6">
@@ -382,10 +394,18 @@ function RouteComponent() {
 								)}
 								<button
 									type="submit"
-									disabled={createActivity.isPending || updateActivity.isPending || !title.trim()}
+									disabled={
+										createActivity.isPending ||
+										updateActivity.isPending ||
+										!title.trim()
+									}
 									className="w-full rounded-xl bg-[#12271A] px-4 py-3 font-medium text-sm text-white transition hover:bg-[#66875D] disabled:opacity-50"
 								>
-									{createActivity.isPending || updateActivity.isPending ? "Saving..." : editingIdActivity ? "Update activity" : "Save activity"}
+									{createActivity.isPending || updateActivity.isPending
+										? "Saving..."
+										: editingIdActivity
+											? "Update activity"
+											: "Save activity"}
 								</button>
 							</form>
 						)}
