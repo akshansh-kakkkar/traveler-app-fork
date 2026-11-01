@@ -25,7 +25,7 @@ function toLocaleDateString(value: Date | string | null | undefined) {
 	if (!value) return "";
 	const date = new Date(value);
 	const offset = date.getTimezoneOffset() * 60000;
-	return new Date(date.getTime() - offset).toISOString().slice(0, 16)
+	return new Date(date.getTime() - offset).toISOString().slice(0, 16);
 }
 
 function RouteComponent() {
@@ -180,7 +180,7 @@ function RouteComponent() {
 			notes: notes.trim() || undefined,
 			startAt: startAt ? new Date(startAt) : undefined,
 			endAt: endAt ? new Date(endAt) : undefined,
-		}
+		};
 		if (editingIdActivity) {
 			const item = itineraryQuery.data?.find(
 				(activity) => activity.id === editingIdActivity,
@@ -193,14 +193,11 @@ function RouteComponent() {
 				...payload,
 				version: item.version,
 			});
-
-		}
-		else {
+		} else {
 			createActivity.mutate({
 				tripId,
 				...payload,
-			})
-
+			});
 		}
 	}
 	function handleToggleActivity(
@@ -382,10 +379,18 @@ function RouteComponent() {
 								)}
 								<button
 									type="submit"
-									disabled={createActivity.isPending || updateActivity.isPending || !title.trim()}
+									disabled={
+										createActivity.isPending ||
+										updateActivity.isPending ||
+										!title.trim()
+									}
 									className="w-full rounded-xl bg-[#12271A] px-4 py-3 font-medium text-sm text-white transition hover:bg-[#66875D] disabled:opacity-50"
 								>
-									{createActivity.isPending || updateActivity.isPending ? "Saving..." : editingIdActivity ? "Update activity" : "Save activity"}
+									{createActivity.isPending || updateActivity.isPending
+										? "Saving..."
+										: editingIdActivity
+											? "Update activity"
+											: "Save activity"}
 								</button>
 							</form>
 						)}

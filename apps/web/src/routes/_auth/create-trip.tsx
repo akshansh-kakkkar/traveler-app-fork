@@ -68,26 +68,34 @@ function RouteComponent() {
 				<DashboardSideBar onExpandedChange={setIsSideBarExpanded} />
 			</>
 			<div
-				className={`${isSideBarExpanded ? "ml-80" : "ml-30"} mx-12 my-12 overflow-y-scroll w-full rounded-2xl bg-[#E4EFE2] p-6 shadow-md transition-all duration-300 ease-in-out`}
+				className={`${isSideBarExpanded ? "ml-80" : "ml-30"} mx-12 my-12 w-full overflow-y-scroll rounded-2xl bg-[#E4EFE2] p-6 shadow-md transition-all duration-300 ease-in-out`}
 			>
 				<div className="flex flex-col gap-[0.1px]">
-					<div className="text-2xl font-extrabold uppercase text-[#12271A]">Create Trip</div>
-					<div className="text-sm font-light text-[#6C776D]">
+					<div className="font-extrabold text-2xl text-[#12271A] uppercase">
+						Create Trip
+					</div>
+					<div className="font-light text-[#6C776D] text-sm">
 						Kuala Lumpur itineraries, built only from places local guides
 						verified.
 					</div>
 				</div>
 				<form onSubmit={handleSubmit} className="space-y-8">
 					<div className="flex flex-col gap-2">
-						<div className="flex my-4 flex-col">
-							<h2 className="text-[#12271A] font-bold capitalize text-lg">Trip Details</h2>
-							<p className="text-[#6C776D] text-sm">Start with the basics. You can update them later.</p>
+						<div className="my-4 flex flex-col">
+							<h2 className="font-bold text-[#12271A] text-lg capitalize">
+								Trip Details
+							</h2>
+							<p className="text-[#6C776D] text-sm">
+								Start with the basics. You can update them later.
+							</p>
 						</div>
-
 
 						<div className="mt-6 space-y-5">
 							<div>
-								<label htmlFor="name" className="mb-2 text-[#12271A] block font-medium">
+								<label
+									htmlFor="name"
+									className="mb-2 block font-medium text-[#12271A]"
+								>
 									Trip Name
 								</label>
 								<input
@@ -98,15 +106,19 @@ function RouteComponent() {
 									placeholder="e.g. Weekend in the mountains"
 									maxLength={100}
 									required
-									className="w-full rounded-xl border placeholder:text-[#6C776D] text-[#12271A] border-[#6C776D] bg-white outline-none focus:border-green-600 p-3" />
+									className="w-full rounded-xl border border-[#6C776D] bg-white p-3 text-[#12271A] outline-none placeholder:text-[#6C776D] focus:border-green-600"
+								/>
 							</div>
 						</div>
 
 						<div>
-							<label htmlFor="description" className="mb-2 text-[#12271A] flex items-center gap-2 font-medium">
+							<label
+								htmlFor="description"
+								className="mb-2 flex items-center gap-2 font-medium text-[#12271A]"
+							>
 								<FileText size={18} />
 								Description
-								<span className="text-sm text-[#6C776D]">(optional)</span>
+								<span className="text-[#6C776D] text-sm">(optional)</span>
 							</label>
 							<textarea
 								name="description"
@@ -115,18 +127,25 @@ function RouteComponent() {
 								onChange={handleChange}
 								maxLength={1000}
 								rows={4}
-								className="w-full rounded-xl placeholder:text-[#6C776D] max-h-50 p-3 text-[#12271A] border border-[#6C776D] bg-white outline-none focus:border-green-600"
+								className="max-h-50 w-full rounded-xl border border-[#6C776D] bg-white p-3 text-[#12271A] outline-none placeholder:text-[#6C776D] focus:border-green-600"
 								placeholder="What are you planning for this trip?"
 							/>
 						</div>
 						<div className="flex flex-col gap-2">
-							<div className="flex flex-col ">
-								<h2 className="text-[#12271A] font-bold text-lg">Travel Dates</h2>
-								<p className="text-sm text-[#6C776D]">Dates are optional. You can plan them later.</p>
+							<div className="flex flex-col">
+								<h2 className="font-bold text-[#12271A] text-lg">
+									Travel Dates
+								</h2>
+								<p className="text-[#6C776D] text-sm">
+									Dates are optional. You can plan them later.
+								</p>
 							</div>
 							<div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
 								<div>
-									<label htmlFor="startDate" className="mb-2 text-[#12271A] flex items-center gap-2 font-medium">
+									<label
+										htmlFor="startDate"
+										className="mb-2 flex items-center gap-2 font-medium text-[#12271A]"
+									>
 										<CalendarDays size={18} />
 										Start Date
 									</label>
@@ -134,12 +153,16 @@ function RouteComponent() {
 										id="startDate"
 										value={form.startDate}
 										onChange={handleChange}
-										className="w-full rounded-xl placeholder:text-[#6C776D] max-h-50 p-3 text-[#12271A] border border-[#6C776D] bg-white outline-none focus:border-green-600"
+										className="max-h-50 w-full rounded-xl border border-[#6C776D] bg-white p-3 text-[#12271A] outline-none placeholder:text-[#6C776D] focus:border-green-600"
 										type="date"
-										name="startDate" />
+										name="startDate"
+									/>
 								</div>
 								<div>
-									<label htmlFor="endDate" className="mb-2 text-[#12271A] flex items-center gap-2 font-medium">
+									<label
+										htmlFor="endDate"
+										className="mb-2 flex items-center gap-2 font-medium text-[#12271A]"
+									>
 										<CalendarDays size={18} />
 										End Date
 									</label>
@@ -147,40 +170,44 @@ function RouteComponent() {
 										id="endDate"
 										value={form.endDate}
 										onChange={handleChange}
-										className="w-full rounded-xl placeholder:text-[#6C776D] max-h-50 p-3 text-[#12271A] border border-[#6C776D] bg-white outline-none focus:border-green-600"
+										className="max-h-50 w-full rounded-xl border border-[#6C776D] bg-white p-3 text-[#12271A] outline-none placeholder:text-[#6C776D] focus:border-green-600"
 										name="endDate"
-
-										type="date" />
+										type="date"
+									/>
 								</div>
 							</div>
 
 							<div className="flex flex-col text-[#6C776D]">
-								<div className="flex items-center text-center text-sm gap-1">
+								<div className="flex items-center gap-1 text-center text-sm">
 									<div>
 										<MapPin size={14} />
 									</div>
-									<p>Your itinerary starts here. Once your trip is created, you can build on these details as
-										you plan your journey.</p>
+									<p>
+										Your itinerary starts here. Once your trip is created, you
+										can build on these details as you plan your journey.
+									</p>
 								</div>
-
 							</div>
 						</div>
 						<div className="flex justify-end gap-4">
 							<button
 								onClick={() => navigate({ to: "/trips" })}
-								className="border-2 border-[#12271A] text-[#12271A] px-4 py-1 rounded-lg cursor-pointer">Cancel</button>
+								className="cursor-pointer rounded-lg border-2 border-[#12271A] px-4 py-1 text-[#12271A]"
+							>
+								Cancel
+							</button>
 
 							<button
 								disabled={createTrip.isPending}
 								type="submit"
-								className="bg-[#12271A] px-4 py-1 rounded-lg cursor-pointer hover:bg-[#12271A]/90 disabled:bg-[#12271A]/60 disabled:cursor-not-allowed transition-all duration-300">
+								className="cursor-pointer rounded-lg bg-[#12271A] px-4 py-1 transition-all duration-300 hover:bg-[#12271A]/90 disabled:cursor-not-allowed disabled:bg-[#12271A]/60"
+							>
 								{createTrip.isPending ? "Creating..." : "Create Trip"}
 							</button>
 						</div>
 					</div>
-
 				</form>
 			</div>
 		</div>
-	)
+	);
 }
