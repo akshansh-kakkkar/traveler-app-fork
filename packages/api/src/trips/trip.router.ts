@@ -45,8 +45,8 @@ export const tripRouter = t.router({
 				data: {
 					name: input.name,
 					description: input.description,
-					startDate: input.startDate?.toISOString() ?? null,
-					endDate: input.endDate?.toISOString() ?? null,
+					startDate: input.startDate instanceof Date ? input.startDate.toISOString() : input.startDate,
+					endDate: input.endDate instanceof Date ? input.endDate.toISOString() : input.endDate,
 					version: input.version,
 				},
 			});

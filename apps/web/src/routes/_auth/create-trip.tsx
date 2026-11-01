@@ -77,7 +77,7 @@ function RouteComponent() {
 						verified.
 					</div>
 				</div>
-				<form onSubmit={handleSubmit} className="space-y-60">
+				<form onSubmit={handleSubmit} className="space-y-8">
 					<div className="flex flex-col gap-2">
 						<div className="flex my-4 flex-col">
 							<h2 className="text-[#12271A] font-bold capitalize text-lg">Trip Details</h2>
@@ -128,7 +128,7 @@ function RouteComponent() {
 								<div>
 									<label htmlFor="startDate" className="mb-2 text-[#12271A] flex items-center gap-2 font-medium">
 										<CalendarDays size={18} />
-										StartDate
+										Start Date
 									</label>
 									<input
 										id="startDate"
