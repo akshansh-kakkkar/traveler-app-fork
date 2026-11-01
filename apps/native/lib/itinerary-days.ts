@@ -1,7 +1,7 @@
 type DateInput = string | Date | null | undefined;
 
 type Dated = { startAt: DateInput };
-// type Coordinate = { latitude: number; longitude: number };
+type Coordinate = { latitude: number; longitude: number };
 
 export type DayGroup<T> = {
 	key: string;
@@ -68,4 +68,73 @@ export function durationMinutes(start: DateInput, end: DateInput): number {
 	if (!start || !end) return 0;
 	const diff = new Date(end).getTime() - new Date(start).getTime();
 	return Math.max(0, Math.round(diff / 60_000));
+}
+
+export function isTodayKey(key: string): boolean {
+	return key === localDayKey(new Date());
+}
+
+export type PinState = "done" | "next" | "todo";
+
+export type RoutePin = {
+	id: string;
+	latitude: number;
+	longitude: number;
+	number: number;
+	state: PinState;
+};
+
+type PinnableStop = {
+	id: string;
+	done: boolean;
+	place: Coordinate | null;
+};
+
+export function routePins(stops: readonly PinnableStop[]): RoutePin[] {
+	const nextId = stops.find((stop) => !stop.done)?.id;
+
+	return stops.flatMap((stop, index) => {
+		if (!stop.place) return [];
+
+		function pinState(
+			stop: PinnableStop,
+			nextId: string | undefined,
+		): PinState {
+			if (stop.done) return "done";
+			if (stop.id === nextId) return "next";
+			return "todo";
+		}
+
+		const state = pinState(stop, nextId);
+
+		return [
+			{
+				id: stop.id,
+				latitude: stop.place.latitude,
+				longitude: stop.place.longitude,
+				number: index + 1,
+				state,
+			},
+		];
+	});
+}
+
+export function mapsRouteUrl(points: readonly Coordinate[]): string | null {
+	if (points.length === 0) return null;
+
+	const toParam = (p: Coordinate) => `${p.latitude},${p.longitude}`;
+	const origin = points.length > 1 ? points[0] : null;
+	const destination = points[points.length - 1];
+	const waypoints = points.slice(1, -1);
+
+	const params = [
+		"api=1",
+		"travelmode=walking",
+		origin && `origin=${toParam(origin)}`,
+		`destination=${toParam(destination)}`,
+		waypoints.length > 0 &&
+			`waypoints=${encodeURIComponent(waypoints.map(toParam).join("|"))}`,
+	].filter(Boolean);
+
+	return `https://www.google.com/maps/dir/?${params.join("&")}`;
 }
