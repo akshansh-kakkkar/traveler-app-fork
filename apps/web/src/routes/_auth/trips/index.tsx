@@ -138,6 +138,18 @@ function RouteComponent() {
 								className="min-w-0 flex-1 bg-transparent text-[#12271A] text-sm outline-none placeholder:text-[#9AA69B]"
 							/>
 						</label>
+						<div className="mt-4 flex flex-wrap gap-2">
+							{(["all", "upcoming", "ongoing", "completed"] as const).map(
+								(status)=> (
+									<button key={status}
+									type="button"
+									onClick={()=> setStatusFilter(status)}
+									className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition ${statusFilter === status ? "bg-[#17291E] text-white" : "border border-[#DDE4D9] bg-white text-[#738076] hover:bg-[#F1F5ED]"}`}>
+										{status === "all" ? "All trips" : status}
+									</button>
+								)
+							)}
+						</div>
 						<div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
 							{[
 								{
@@ -244,6 +256,11 @@ function RouteComponent() {
 							</button>
 						</div>
 					)}
+																		{(search || statusFilter !== "all") && (
+										<button className="mt-4 rounded-xl border border-[#DDE4D9] bg-white px-4 py-2 text-sm font-medium text-[#426449] transition hover:bg-[#F1F5ED]">
+											Clear Filters
+										</button>
+									)}
 					{!tripsQuery.isPending &&
 						!tripsQuery.isError &&
 						filteredTrips.length === 0 && (
@@ -256,12 +273,12 @@ function RouteComponent() {
 									)}
 								</div>
 								<h3 className="mt-5 font-semibold text-lg">
-									{search
+									{search || statusFilter !== "all"
 										? "No matching trips"
 										: "Your next chapter starts here"}
 								</h3>
 								<p className="mt-2 max-w-sm text-[#738076] text-sm leading-6">
-									{search
+									{search || statusFilter !== "all"
 										? "Try another search term to find your trip"
 										: "Create your first trip and bring your travel plans together in one place."}
 								</p>
@@ -279,6 +296,7 @@ function RouteComponent() {
 
 						)}
 				</div>
+
 				{!tripsQuery.isPending &&
 					!tripsQuery.isError &&
 					filteredTrips.length > 0 && (
@@ -289,9 +307,11 @@ function RouteComponent() {
 									to="/trips/$tripId"
 									params={{ tripId: trip.id }}
 									key={trip.id}
-									className="group flex min-h-56 flex-col rounded-2xl border border-[#E0E6DD] bg-white p-6 transition duration-200 hover:-translate-y-1 hover:border-[#B8CDB5] hover:shadow-lg hover:shadow-[#203B2810]"
-								>
-									<div className="flex items-center gap-2">
+									className={`group flex rounded-2xl border border-[#E0E6DD] bg-white p-6 transition duration-200 hover:border-[#B8CDB5] hover:shadow-lg hover:shadow-[#203b2810] ${viewMode === "grid" ? "min-h-56 flex-col hover:-translate-y-1" : "flex-row items-center gap-6"}`}
+>
+									<div className={`flex items-center gap-2 ${
+										viewMode === "list" ? "min-w-32" : ""
+									}`}>
 										<span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${getTripStatus(trip.startDate, trip.endDate) === "upcoming" ? "bg-blue-100 text-blue-700" : getTripStatus(trip.startDate, trip.endDate) === "ongoing" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
 											{getTripStatus(trip.startDate, trip.endDate)}
 										</span>
@@ -300,14 +320,15 @@ function RouteComponent() {
 											className="text-[#9AA60B]transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
 										/>
 									</div>
-									<h3 className="mt-6 break-words font-semibold text-xl tracking-tight">
+									<h3 className={` break-words font-semibold text-xl tracking-tight ${viewMode === "grid" ? "mt-6" : "flex"}`}>
 										{trip.name}
 									</h3>
-									<p className="mt-2 line-clamp-2 flex-1 text-[#748076] text-sm leading-6">
+									<p className={`line-clamp-2 flex-1 text-[#748076] text-sm leading-6 ${viewMode === "grid" ? "mt-2 flex-1" : "min-w-0 flex-1"}`}>
 										{trip.description || "No description added yet."}
 									</p>
+
 									{(trip.startDate || trip.endDate) && (
-										<div className="mt-5 flex items-center gap-2 border-[#EDF0E9] border-t pt-4 text-[#66786A] text-xs">
+										<div className={`flex items-center gap-2 text-[#66786A] text-xs ${ viewMode === "grid" ? "mt-5 border-[#EDF0E9] border-t pt-4" : "shrink-0 border-l border-[#EDF0E9] pl-6"}`}>
 											<CalendarDays size={15} />
 											<span>
 												{trip.startDate

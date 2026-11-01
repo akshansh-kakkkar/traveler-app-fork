@@ -48,51 +48,64 @@ export async function tripService({
 	return trip;
 }
 
-export async function getTripsService({ userId }: { userId: string }) {
+export async function getTripsService({ userId, }: { userId: string,  }) {
 	const trips = await prisma.trip.findMany({
-		where: {
-			OR: [{ ownerId: userId }, { members: { some: { userId } } }],
+		where : {
+			OR : [
+				{ownerId : userId},
+				{members : { some : { userId }}},
+			],
 		},
-		orderBy: { updatedAt: "desc" },
-		include: {
-			items: { select: { done: true } },
-			members: { where: { userId }, select: { role: true } },
-		},
+		include : {
+			items : {
+				select : {
+					done : true,
+				}
+			}
+		}
 	});
 
-	return trips.map(({ items, members, ...trip }) => ({
-		...trip,
-		stops: items.length,
-		done: items.filter((item) => item.done).length,
-		role: members[0]?.role ?? (trip.ownerId === userId ? "owner" : "viewer"),
-	}));
+	return trips.map(({ items, ...tripData}) => ({
+		...tripData,
+		stops : items.length,
+		done : items.filter((item)=> item.done).length,
+	}))
 }
 
 export async function getTripService({
 	userId,
-	tripId,
+	tripId
 }: {
 	userId: string;
-	tripId: string;
+	tripId : string;
 }) {
 	const trip = await prisma.trip.findFirst({
-		where: {
-			id: tripId,
-			OR: [
+		where : {
+			id : tripId,
+			OR : [
 				{
-					ownerId: userId,
+					ownerId : userId,
 				},
 				{
-					members: {
-						some: {
-							userId,
-						},
-					},
-				},
+					members : {some : {userId}}
+				}
 			],
 		},
+		include : {
+			items : {
+				select : {
+					done : true,
+				}
+			}
+		}
 	});
-	return trip;
+	if (!trip) return null;
+	const { items, ...tripData } = trip; 
+	return {
+		...tripData,
+		stops : items.length,
+		done : items.filter((item)=>item.done).length,
+	}
 }
 
 export async function updateTripService({
