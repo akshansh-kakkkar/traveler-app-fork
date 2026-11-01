@@ -60,7 +60,7 @@ function RootComponent() {
 		setShowLoader(false);
 	}, []);
 	return (
-		<>
+		<div className="scrollbar-x-hidden">
 			<HeadContent />
 			<ThemeProvider
 				attribute="class"
@@ -81,6 +81,6 @@ function RootComponent() {
 				<Toaster richColors />
 			</ThemeProvider>
 			<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
-		</>
+		</div>
 	);
 }
