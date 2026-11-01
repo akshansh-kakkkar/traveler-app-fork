@@ -37,7 +37,7 @@ export default function DayRow({
 					isToday ? "bg-accent" : "bg-background",
 				)}
 			>
-				<Text className="text-foreground text-xs">{weekday}</Text>
+				<Text className="text-accent-foreground text-xs">{weekday}</Text>
 				<Text className="font-bold text-foreground text-lg">{date}</Text>
 			</View>
 
