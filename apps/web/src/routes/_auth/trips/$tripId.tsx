@@ -1,20 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-	ArrowLeft,
-	CalendarDays,
-	MapPinIcon,
-	Plus
-} from "lucide-react";
+import { ArrowLeft, CalendarDays, MapPinIcon, Plus } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import React, { useState } from "react";
 
 export const Route = createFileRoute("/_auth/trips/$tripId")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-
 	const { tripId } = Route.useParams();
 
 	const queryClient = useQueryClient();
@@ -51,7 +46,20 @@ function RouteComponent() {
 				setShowActivityForm(false);
 			},
 		}),
+	);
+	
+	const updateActivity = useMutation(
+		trpc.itinerary.update.mutationOptions({
+			onSuccess : async ()=>{
+				await queryClient.invalidateQueries({
+					queryKey : trpc.itinerary.getAll.queryKey({
+						id : tripId,
+					})
+				})
+			}
+		})
 	)
+
 	if (tripsQuery.isPending) {
 		return (
 			<main className="min-h-screen bg-[#E4EFE2] p-8">
@@ -72,14 +80,21 @@ function RouteComponent() {
 			title: title.trim(),
 			notes: notes.trim() || undefined,
 			startAt: startAt ? new Date(startAt) : undefined,
-			endAt: endAt ? new Date(endAt) : undefined
+			endAt: endAt ? new Date(endAt) : undefined,
+		});
+	}
+	function handleToggleActivity(
+		item : NonNullable<typeof itineraryQuery.data>[number],
+	){
+		updateActivity.mutate({
+			id : item.id,
+			done : !item.done,
+			version : item.version
 		})
 	}
-
-
 	if (tripsQuery.isError || !tripsQuery.data) {
 		return (
-			<main className="flex min-h-screen items-center justify-center bg-[#E4EFE2] p-6 text-[#12271A]">
+			<main className="flex items-center justify-center bg-[#E4EFE2] p-6 text-[#12271A]">
 				<div className="max-w-md text-center">
 					<h1 className="font-semibold text-2xl">Trip not found</h1>
 					<p className="mt-22 text-[#738076] text-sm">
@@ -120,7 +135,7 @@ function RouteComponent() {
 					</p>
 				</div>
 				<div className="mt-8 grid grid-cols-2 gap-4">
-					<div className="borrder borrder-[#D7E1D4] rounded-2xl bg-white p-6">
+					<div className="border border-[#D7E1D4] rounded-2xl bg-white p-6">
 						<div className="flex items-center gap-2 text-[#738076] text-sm">
 							<CalendarDays size={18} />
 							Travel dates
@@ -149,45 +164,63 @@ function RouteComponent() {
 						<button
 							type="button"
 							onClick={() => setShowActivityForm(!showActivityForm)}
-							className="mt-5 w-full rounded-xl bg-[#12271A] px-4 py-3 font-medium text-sm text-white transition hover:bg-[#294b35]">
-							{showActivityForm ? "Cancel" : (
+							className="mt-5 w-full rounded-xl bg-[#12271A] px-4 py-3 font-medium text-sm text-white transition hover:bg-[#294b35]"
+						>
+							{showActivityForm ? (
+								"Cancel"
+							) : (
 								<>
-									<Plus size={16} className="inline mr-2" />
+									<Plus size={16} className="mr-2 inline" />
 									Add activity
 								</>
 							)}
 						</button>
 						{showActivityForm && (
-							<form onSubmit={handleCreateActivity} className="flex flex-col gap-2 mt-2">
-								<input type="text"
+							<form
+								onSubmit={handleCreateActivity}
+								className="mt-2 flex flex-col gap-2"
+							>
+								<input
+									type="text"
 									value={title}
 									onChange={(e) => setTitle(e.target.value)}
 									placeholder="Activity title"
 									required
-									className="w-full rounded-xl border border-[#D7E1D4] p-3 text-sm outline-none focus:border-[#7A9B70]" />
+									className="w-full rounded-xl border border-[#D7E1D4] p-3 text-sm outline-none focus:border-[#7A9B70]"
+								/>
 								<textarea
 									value={notes}
 									onChange={(e) => setNotes(e.target.value)}
 									placeholder="Notes (optional)"
 									rows={3}
-									className="w-full rounded-xl border border-[#D7E1D4] p-3 text-sm outline-none focus:border-[#7A9B70]" />
+									className="w-full rounded-xl border border-[#D7E1D4] p-3 text-sm outline-none focus:border-[#7A9B70]"
+								/>
 								<div className="grid grid-cols-2 gap-3">
-									<input type="datetime-local"
+									<input
+										type="datetime-local"
 										value={startAt}
 										onChange={(e) => setStartAt(e.target.value)}
-										className="min-w-0 w-full rounded-xl border border-[#D7E1D4] p-3 text-sm" />
-									<input type="datetime-local"
+										className="w-full min-w-0 rounded-xl border border-[#D7E1D4] p-3 text-sm"
+									/>
+									<input
+										type="datetime-local"
 										value={endAt}
 										onChange={(e) => setEndAt(e.target.value)}
-										className="min-w-0 w-full rounded-xl border border-[#D7E1D4] p-3 text-sm" />
+										className="w-full min-w-0 rounded-xl border border-[#D7E1D4] p-3 text-sm"
+									/>
 								</div>
 
 								{createActivity.isError && (
-									<p className="text-sm text-red-600">
+									<p className="text-red-600 text-sm">
 										Failed to create activity. Please try again.
 									</p>
 								)}
-								<button className="w-full rounded-xl bg-[#12271A] px-4 py-3 font-medium text-sm text-white transition hover:bg-[#66875D] disabled:opacity-50">{createActivity.isPending ? "Adding..." : "Save activity"}</button>
+								<button 
+								type="submit"
+								disabled={createActivity.isPending || !title.trim()}
+								className="w-full rounded-xl bg-[#12271A] px-4 py-3 font-medium text-sm text-white transition hover:bg-[#66875D] disabled:opacity-50">
+									{createActivity.isPending ? "Adding..." : "Save activity"}
+								</button>
 							</form>
 						)}
 						{itineraryQuery.isPending ? (
@@ -227,7 +260,9 @@ function RouteComponent() {
 										)}
 										{(item.startAt || item.endAt) && (
 											<p>
-												<span>Starts: {new Date(item.startAt).toLocaleString()}</span>
+												<span>
+													Starts: {new Date(String(item.startAt)).toLocaleString()}
+												</span>
 												{item.startAt && item.endAt && " . "}
 												{item.endAt && (
 													<span>
@@ -238,7 +273,17 @@ function RouteComponent() {
 										)}
 
 										<span
-										className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-medium ${item.done ? "bg-[#E1EFE1] text-[#426449]" : "bg-[#F1F0E7] text-[#82713D]"}`}>{item.done ? "Completed" : "Planned"}</span>
+											className={`mt-3 inline-flex rounded-full px-3 py-1 font-medium text-xs ${item.done ? "bg-[#E1EFE1] text-[#426449]" : "bg-[#F1F0E7] text-[#82713D]"}`}
+										>
+											{item.done ? "Completed" : "Planned"}
+										</span>
+										<button
+										type="button"
+										onClick={()=> handleToggleActivity(item)}
+										disabled={updateActivity.isPending}
+										className="ml-3 text-xs font-medium text-[#66875D] hover:underline disabled:opacity-50">
+											{item.done ? "Mark as planned" : "Mark as completed"}
+										</button>
 									</div>
 								))}
 							</div>

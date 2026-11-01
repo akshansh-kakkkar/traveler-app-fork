@@ -266,6 +266,7 @@ export async function updateItineraryItemService({
 			serverVersion: currentItem?.version ?? null,
 		};
 	}
+	return result;
 }
 
 export async function deleteItineraryItemService({
