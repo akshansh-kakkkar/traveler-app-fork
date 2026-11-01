@@ -98,7 +98,7 @@ function RouteComponent() {
 							<button
 								type="button"
 								onClick={() => void tripsQuery.refetch()}
-								className="hover:bg-[#F6F7F1] mt-5 inline-flex items-center gap-2 rounded-lg border border-[#DDE4D9] px-4 py-2 font-medium text-sm"
+								className="mt-5 inline-flex items-center gap-2 rounded-lg border border-[#DDE4D9] px-4 py-2 font-medium text-sm hover:bg-[#F6F7F1]"
 							>
 								<RefreshCw size={15} />
 							</button>
@@ -148,7 +148,7 @@ function RouteComponent() {
 									to="/trips/$tripId"
 									params={{ tripId: trip.id }}
 									key={trip.id}
-									className="group hover:border-[#B8CDB5] flex min-h-56 flex-col rounded-2xl border border-[#E0E6DD] bg-white p-6 transition duration-200 hover:-translate-y-1 hover::shadow-lg hover:shadow-[#203B2810]"
+									className="group flex min-h-56 flex-col rounded-2xl border border-[#E0E6DD] bg-white p-6 transition duration-200 hover:-translate-y-1 hover:border-[#B8CDB5] hover::shadow-lg hover:shadow-[#203B2810]"
 								>
 									<div className="flex items-start justify-between gap-3">
 										<div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E8EFE3] text-[#426449]">
