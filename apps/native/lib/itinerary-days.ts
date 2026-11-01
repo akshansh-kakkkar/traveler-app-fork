@@ -128,7 +128,7 @@ export function mapsRouteUrl(points: readonly Coordinate[]): string | null {
 	const waypoints = points.slice(1, -1);
 
 	const params = [
-		"api-1",
+		"api=1",
 		"travelmode=walking",
 		origin && `origin=${toParam(origin)}`,
 		`destination=${toParam(destination)}`,
