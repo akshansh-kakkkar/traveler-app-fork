@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Tripoverview } from "@/components/overview/Tripoverview";
+import { Tripoverview } from "@/components/overview/TripOverview";
 // import { TripOverview } from "@/components/overview/TripOverview";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { authClient } from "@/lib/auth-client";
