@@ -90,7 +90,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="relative flex h-screen bg-[#E4EFE2]">
+		<div className="relative flex min-h-screen bg-[#E4EFE2]">
 			<DashboardSideBar onExpandedChange={setSideBarPinned} />
 			<div
 				className={`${sideBarPinned ? "ml-80" : "ml-30"} my-12 w-full text-[#12271A] transition-all duration-300 ease-in-out`}
@@ -266,7 +266,14 @@ function RouteComponent() {
 						</div>
 					)}
 					{(search || statusFilter !== "all") && (
-						<button className="mt-4 rounded-xl border border-[#DDE4D9] bg-white px-4 py-2 font-medium text-[#426449] text-sm transition hover:bg-[#F1F5ED]">
+						<button
+							type="button"
+							onClick={() => {
+								setSearch("");
+								setStatusFilter("all");
+							}}
+							className="mt-4 rounded-xl border border-[#DDE4D9] bg-white px-4 py-2 font-medium text-[#426449] text-sm transition hover:bg-[#F1F5ED]"
+						>
 							Clear Filters
 						</button>
 					)}
