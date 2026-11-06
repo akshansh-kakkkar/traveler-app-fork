@@ -31,7 +31,8 @@
 		"react-dom": "^19.2.8",
 		"sonner": "catalog:",
 		"vite-plugin-pwa": "^1.3.0",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"zustand": "^5.0.16"
 	},
 	"devDependencies": {
 		"@tanstack/react-query-devtools": "^5.101.4",

@@ -41,7 +41,9 @@ function RouteComponent() {
 	const [statusFilter, setStatusFilter] = useState<
 		"all" | "upcoming" | "ongoing" | "completed"
 	>("all");
-	const [sortBy, setSortBy] = useState<"recent" | "departure" | "name">("recent");
+	const [sortBy, setSortBy] = useState<"recent" | "departure" | "name">(
+		"recent",
+	);
 	const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 	const [search, setSearch] = useState("");
 	const [sideBarPinned, setSideBarPinned] = useState(false);
@@ -60,7 +62,8 @@ function RouteComponent() {
 		switch (sortBy) {
 			case "departure":
 				return (
-					new Date(a.startDate ?? "9999-12-31").getTime() - new Date(b.startDate ?? "9999-12-31").getTime()
+					new Date(a.startDate ?? "9999-12-31").getTime() -
+					new Date(b.startDate ?? "9999-12-31").getTime()
 				);
 
 			case "name":
@@ -68,11 +71,10 @@ function RouteComponent() {
 			case "recent":
 			default:
 				return (
-					new Date(b.updatedAt).getTime() -
-					new Date(a.updatedAt).getTime()
-				)
+					new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+				);
 		}
-	})
+	});
 
 	const tripStats = {
 		total: trips.length,
@@ -83,9 +85,9 @@ function RouteComponent() {
 			(trip) => getTripStatus(trip.startDate, trip.endDate) === "ongoing",
 		).length,
 		completed: trips.filter(
-			(trip) => getTripStatus(trip.startDate, trip.endDate) === "completed"
-		).length
-	}
+			(trip) => getTripStatus(trip.startDate, trip.endDate) === "completed",
+		).length,
+	};
 
 	return (
 		<div className="relative flex h-screen bg-[#E4EFE2]">
@@ -140,14 +142,16 @@ function RouteComponent() {
 						</label>
 						<div className="mt-4 flex flex-wrap gap-2">
 							{(["all", "upcoming", "ongoing", "completed"] as const).map(
-								(status)=> (
-									<button key={status}
-									type="button"
-									onClick={()=> setStatusFilter(status)}
-									className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition ${statusFilter === status ? "bg-[#17291E] text-white" : "border border-[#DDE4D9] bg-white text-[#738076] hover:bg-[#F1F5ED]"}`}>
+								(status) => (
+									<button
+										key={status}
+										type="button"
+										onClick={() => setStatusFilter(status)}
+										className={`rounded-full px-4 py-2 font-medium text-sm capitalize transition ${statusFilter === status ? "bg-[#17291E] text-white" : "border border-[#DDE4D9] bg-white text-[#738076] hover:bg-[#F1F5ED]"}`}
+									>
 										{status === "all" ? "All trips" : status}
 									</button>
-								)
+								),
 							)}
 						</div>
 						<div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -156,7 +160,7 @@ function RouteComponent() {
 									label: "All trips",
 									value: tripStats.total,
 									icon: Compass,
-									color: "bg-[#E8EFE3]"
+									color: "bg-[#E8EFE3]",
 								},
 								{
 									label: "Upcoming",
@@ -178,30 +182,33 @@ function RouteComponent() {
 								},
 							].map((stat) => {
 								const Icon = stat.icon;
-								return(
-								<div
-									key={stat.label}
-									className={`rounded-2xl border border-[#DDE4D9] bg-white p-5 transition hover:translate-y-1 hover:shadow-md`}
-								>
-									<div className="flex items-center justify-between">
-										<div>
-											<p className="text-sm font-medium text-[#738076]">
-												{stat.label}
-											</p>
-											<h3 className="mt-2 text-3xl font-bold text-[#12271A]">
-												{stat.value}
-											</h3>
-										</div>
-										<div className={`rounded-xl p-3 ${stat.color}`}>
-											<Icon size={22} className="text-[#426449]" />
+								return (
+									<div
+										key={stat.label}
+										className={
+											"rounded-2xl border border-[#DDE4D9] bg-white p-5 transition hover:translate-y-1 hover:shadow-md"
+										}
+									>
+										<div className="flex items-center justify-between">
+											<div>
+												<p className="font-medium text-[#738076] text-sm">
+													{stat.label}
+												</p>
+												<h3 className="mt-2 font-bold text-3xl text-[#12271A]">
+													{stat.value}
+												</h3>
+											</div>
+											<div className={`rounded-xl p-3 ${stat.color}`}>
+												<Icon size={22} className="text-[#426449]" />
+											</div>
 										</div>
 									</div>
-								</div>)
-})}
+								);
+							})}
 							<div className="flex items-center gap-1 rounded-xl border border-[#DDE4D9] bg-white p-1">
 								<button
 									type="button"
-									onClick={() => setViewMode('grid')}
+									onClick={() => setViewMode("grid")}
 									aria-label="Grid view"
 									className={`rounded-lg p-2 ${viewMode === "grid" ? "bg-[#17291E] text-white" : "text-[#738076] hover:bg-[#F1F5ED]"}`}
 								>
@@ -211,20 +218,22 @@ function RouteComponent() {
 									type="button"
 									onClick={() => setViewMode("list")}
 									aria-label="List view"
-									className={`rounded-lg p-2 ${viewMode === "list" ? "bg-[#17291E] text-white" : "text-[#738076] hover:bg-[#F1F5ED]"}`}>
+									className={`rounded-lg p-2 ${viewMode === "list" ? "bg-[#17291E] text-white" : "text-[#738076] hover:bg-[#F1F5ED]"}`}
+								>
 									<List size={18} />
 								</button>
 							</div>
 						</div>
 						<div className="mt-5 flex items-center justify-end gap-3">
-							<label htmlFor="trip-sort" className="text-sm text-[#738076]">
+							<label htmlFor="trip-sort" className="text-[#738076] text-sm">
 								Sort by
 							</label>
 							<select
 								id="trip-sort"
 								value={sortBy}
 								onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-								className="rounded-xl border border-[#DDE4D9] bg-white px-4 py-2 text-sm text-[#12271A] outline-none focus:border-green-600">
+								className="rounded-xl border border-[#DDE4D9] bg-white px-4 py-2 text-[#12271A] text-sm outline-none focus:border-green-600"
+							>
 								<option value="recent">Recently updated</option>
 								<option value="departure">Departure date</option>
 								<option value="name">Name (A-Z)</option>
@@ -256,11 +265,11 @@ function RouteComponent() {
 							</button>
 						</div>
 					)}
-																		{(search || statusFilter !== "all") && (
-										<button className="mt-4 rounded-xl border border-[#DDE4D9] bg-white px-4 py-2 text-sm font-medium text-[#426449] transition hover:bg-[#F1F5ED]">
-											Clear Filters
-										</button>
-									)}
+					{(search || statusFilter !== "all") && (
+						<button className="mt-4 rounded-xl border border-[#DDE4D9] bg-white px-4 py-2 font-medium text-[#426449] text-sm transition hover:bg-[#F1F5ED]">
+							Clear Filters
+						</button>
+					)}
 					{!tripsQuery.isPending &&
 						!tripsQuery.isError &&
 						filteredTrips.length === 0 && (
@@ -293,26 +302,34 @@ function RouteComponent() {
 									</button>
 								)}
 							</div>
-
 						)}
 				</div>
 
 				{!tripsQuery.isPending &&
 					!tripsQuery.isError &&
 					filteredTrips.length > 0 && (
-						<div className={`mx-16 mt-6 grid gap-5 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3" : "grid-cols-1"
-							}`}>
+						<div
+							className={`mx-16 mt-6 grid gap-5 ${
+								viewMode === "grid"
+									? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+									: "grid-cols-1"
+							}`}
+						>
 							{sortedTrip.map((trip) => (
 								<Link
 									to="/trips/$tripId"
 									params={{ tripId: trip.id }}
 									key={trip.id}
-									className={`group flex rounded-2xl border border-[#E0E6DD] bg-white p-6 transition duration-200 hover:border-[#B8CDB5] hover:shadow-lg hover:shadow-[#203b2810] ${viewMode === "grid" ? "min-h-56 flex-col hover:-translate-y-1" : "flex-row items-center gap-6"}`}
->
-									<div className={`flex items-center gap-2 ${
-										viewMode === "list" ? "min-w-32" : ""
-									}`}>
-										<span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${getTripStatus(trip.startDate, trip.endDate) === "upcoming" ? "bg-blue-100 text-blue-700" : getTripStatus(trip.startDate, trip.endDate) === "ongoing" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
+									className={`group flex rounded-2xl border border-[#E0E6DD] bg-white p-6 transition duration-200 hover:border-[#B8CDB5] hover:shadow-[#203b2810] hover:shadow-lg ${viewMode === "grid" ? "min-h-56 flex-col hover:-translate-y-1" : "flex-row items-center gap-6"}`}
+								>
+									<div
+										className={`flex items-center gap-2 ${
+											viewMode === "list" ? "min-w-32" : ""
+										}`}
+									>
+										<span
+											className={`rounded-full px-3 py-1 font-semibold text-xs capitalize ${getTripStatus(trip.startDate, trip.endDate) === "upcoming" ? "bg-blue-100 text-blue-700" : getTripStatus(trip.startDate, trip.endDate) === "ongoing" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}
+										>
 											{getTripStatus(trip.startDate, trip.endDate)}
 										</span>
 										<ArrowUpRight
@@ -320,39 +337,45 @@ function RouteComponent() {
 											className="text-[#9AA60B]transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
 										/>
 									</div>
-									<h3 className={` break-words font-semibold text-xl tracking-tight ${viewMode === "grid" ? "mt-6" : "flex"}`}>
+									<h3
+										className={`break-words font-semibold text-xl tracking-tight ${viewMode === "grid" ? "mt-6" : "flex"}`}
+									>
 										{trip.name}
 									</h3>
-									<p className={`line-clamp-2 flex-1 text-[#748076] text-sm leading-6 ${viewMode === "grid" ? "mt-2 flex-1" : "min-w-0 flex-1"}`}>
+									<p
+										className={`line-clamp-2 flex-1 text-[#748076] text-sm leading-6 ${viewMode === "grid" ? "mt-2 flex-1" : "min-w-0 flex-1"}`}
+									>
 										{trip.description || "No description added yet."}
 									</p>
 
 									{(trip.startDate || trip.endDate) && (
-										<div className={`flex items-center gap-2 text-[#66786A] text-xs ${ viewMode === "grid" ? "mt-5 border-[#EDF0E9] border-t pt-4" : "shrink-0 border-l border-[#EDF0E9] pl-6"}`}>
+										<div
+											className={`flex items-center gap-2 text-[#66786A] text-xs ${viewMode === "grid" ? "mt-5 border-[#EDF0E9] border-t pt-4" : "shrink-0 border-[#EDF0E9] border-l pl-6"}`}
+										>
 											<CalendarDays size={15} />
 											<span>
 												{trip.startDate
 													? new Date(trip.startDate).toLocaleDateString(
-														undefined,
-														{
-															day: "numeric",
-															month: "short",
-															year: "numeric",
-															timeZone: "UTC",
-														},
-													)
+															undefined,
+															{
+																day: "numeric",
+																month: "short",
+																year: "numeric",
+																timeZone: "UTC",
+															},
+														)
 													: "Date not set"}
 												&nbsp;&nbsp;
 												{trip.endDate
 													? new Date(trip.endDate).toLocaleDateString(
-														undefined,
-														{
-															day: "numeric",
-															month: "short",
-															year: "numeric",
-															timeZone: "UTC",
-														},
-													)
+															undefined,
+															{
+																day: "numeric",
+																month: "short",
+																year: "numeric",
+																timeZone: "UTC",
+															},
+														)
 													: "Ongoing"}
 											</span>
 										</div>

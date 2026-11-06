@@ -47,7 +47,8 @@
 		"dotenv": "catalog:",
 		"lucide-react": "^1.55.0",
 		"resend": "^6.28.1",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"zustand": "^5.0.16"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.11",
