@@ -1,4 +1,5 @@
 import ReactECharts from "echarts-for-react";
+
 interface MonthlyTripsChart {
 	data: {
 		month: string;
@@ -6,16 +7,14 @@ interface MonthlyTripsChart {
 	}[];
 }
 
-export default function MonthlTripChart({
-	data,
-}: MonthlyTripsChart) {
+export default function MonthlTripChart({ data }: MonthlyTripsChart) {
 	const option = {
 		tooltip: {
-			trigger : "axis",
+			trigger: "axis",
 			backgroundColor: "#17281E",
 			borderWidth: 0,
 			textStyle: {
-				color : "#FFFFFF",
+				color: "#FFFFFF",
 			},
 		},
 		grid: {
@@ -28,7 +27,7 @@ export default function MonthlTripChart({
 		xAxis: {
 			type: "category",
 			boundaryGap: false,
-			data: data.map((item)=> item.month),
+			data: data.map((item) => item.month),
 			axisLine: {
 				show: false,
 			},
@@ -56,7 +55,7 @@ export default function MonthlTripChart({
 				name: "Trips",
 				type: "line",
 				smooth: true,
-				data: data.map((item)=> item.trips),
+				data: data.map((item) => item.trips),
 				symbol: "circle",
 				symbolSize: 8,
 				lineStyle: {
@@ -76,11 +75,11 @@ export default function MonthlTripChart({
 						colorStops: [
 							{
 								offset: 0,
-								color: "rgba(66,100,73,0.3)"
+								color: "rgba(66,100,73,0.3)",
 							},
 							{
 								offset: 0,
-								color: "rgba(66,100,73,0.02)"
+								color: "rgba(66,100,73,0.02)",
 							},
 						],
 					},
@@ -92,18 +91,17 @@ export default function MonthlTripChart({
 	return (
 		<section className="rounded-2xl border border-[#D1DCCF] bg-white p-6">
 			<div className="mb-4">
-				<h2 className="text-lg font-bold tet-[#12271A]">
-					Monthly Trips
-				</h2>
-				<p className="mt-1 text-sm text-[#6C776D]"> 
+				<h2 className="tet-[#12271A] font-bold text-lg">Monthly Trips</h2>
+				<p className="mt-1 text-[#6C776D] text-sm">
 					Your travel actvity over time
 				</p>
 			</div>
 			<ReactECharts
 				option={option}
-				style={{ height: "300px", width: "100%"}}
+				style={{ height: "300px", width: "100%" }}
 				notMerge
-				lazyUpdate />
+				lazyUpdate
+			/>
 		</section>
-	)
+	);
 }

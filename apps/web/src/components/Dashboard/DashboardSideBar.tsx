@@ -86,7 +86,7 @@ export default function DashboardSideBar({
 			onMouseLeave={() => {
 				setIsHovered(false);
 			}}
-			className={`bg-[#12271A] z-500 ${sideBarSize ? "hover:w-70" : ""} fixed flex h-screen flex-col justify-between py-4 ${isExpanded ? "w-70" : "w-20"} transition-[width] duration-300 ease-in-out`}
+			className={`z-500 bg-[#12271A] ${sideBarSize ? "hover:w-70" : ""} fixed flex h-screen flex-col justify-between py-4 ${isExpanded ? "w-70" : "w-20"} transition-[width] duration-300 ease-in-out`}
 		>
 			<div className="mx-2 mt-4 flex items-center justify-between">
 				<div className="flex items-center gap-2 text-center">
