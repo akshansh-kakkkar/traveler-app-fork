@@ -91,7 +91,7 @@ export default function MonthlTripChart({ data }: MonthlyTripsChart) {
 	return (
 		<section className="rounded-2xl border border-[#D1DCCF] bg-white p-6">
 			<div className="mb-4">
-				<h2 className="tet-[#12271A] font-bold text-lg">Monthly Trips</h2>
+				<h2 className="font-bold text-[#12271A] text-lg">Monthly Trips</h2>
 				<p className="mt-1 text-[#6C776D] text-sm">
 					Your travel actvity over time
 				</p>

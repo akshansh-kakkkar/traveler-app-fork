@@ -1,4 +1,4 @@
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from "echarts-for-react";
 
 interface TripStatusChartsProps {
 	completed: number;
@@ -9,8 +9,8 @@ interface TripStatusChartsProps {
 export default function TripStatusCharts({
 	completed,
 	upcoming,
-	onGoing
-} : TripStatusChartsProps){
+	onGoing,
+}: TripStatusChartsProps) {
 	const option = {
 		tooltip: {
 			triger: "item",
@@ -44,19 +44,17 @@ export default function TripStatusCharts({
 		],
 	};
 
-	return(
+	return (
 		<section className="rounded-2xl border border-[#D1DCCF] bg-white p-6">
-			<h2 className="text-lg font-bold text-[#12271a]">Trip Status</h2>
-			<p className="mt-1 text-sm text-[#6C776D]">
-				Breakdown of your trips
-			</p>
+			<h2 className="font-bold text-[#12271a] text-lg">Trip Status</h2>
+			<p className="mt-1 text-[#6C776D] text-sm">Breakdown of your trips</p>
 
 			<ReactECharts
-			option={option}
-			style={{ height : "300px", width : "100%" }}
-			notMerge
-			lazyUpdate
+				option={option}
+				style={{ height: "300px", width: "100%" }}
+				notMerge
+				lazyUpdate
 			/>
 		</section>
-	)
+	);
 }

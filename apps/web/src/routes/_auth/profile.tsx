@@ -5,13 +5,14 @@ import DashboardSideBar from "@/components/Dashboard/DashboardSideBar";
 import AccountSettings from "@/components/Profile/AccountSettings";
 import EditProfile from "@/components/Profile/EditProfile";
 import MonthlTripChart from "@/components/Profile/MonthlyTripsChart";
+import ProfileCompletion from "@/components/Profile/ProfileCompletion";
 import ProfileDetails from "@/components/Profile/ProfileDetails";
 import ProfileHeader from "@/components/Profile/ProfileHeader";
 import ProfileTrips from "@/components/Profile/ProfileTrips";
 import TravelStats from "@/components/Profile/TravelStats";
+import TripStatusCart from "@/components/Profile/TripStatusChart";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { trpc } from "@/utils/trpc";
-import TripStatusCart from "@/components/Profile/TripStatusChart"
 export const Route = createFileRoute("/_auth/profile")({
 	component: RouteComponent,
 });
@@ -61,9 +62,12 @@ function RouteComponent() {
 	});
 
 	const ongoingTrips = trips.filter(
-		(trip) => trip.startDate && trip.endDate && new Date(trip.startDate) <= now && 
-		new Date(trip.endDate) >= now
-	).length
+		(trip) =>
+			trip.startDate &&
+			trip.endDate &&
+			new Date(trip.startDate) <= now &&
+			new Date(trip.endDate) >= now,
+	).length;
 
 	return (
 		<div className="relative flex h-screen bg-[#E4EFE2]">
@@ -76,11 +80,14 @@ function RouteComponent() {
 					<p className="mb-8 text-[#6C776D]">Manage Traveler account.</p>
 				</div>
 				<ProfileHeader name={user.name} email={user.email} image={user.image} />
-				<MonthlTripChart data={monthlyTrips} />
-			  <TripStatusCart
-				completed={completedTrips}
-				upcoming={upcomingTrips}
-				onGoing={ongoingTrips} />
+				<div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+					<MonthlTripChart data={monthlyTrips} />
+					<TripStatusCart
+						completed={completedTrips}
+						upcoming={upcomingTrips}
+						onGoing={ongoingTrips}
+					/>
+				</div>
 				{!tripsQuery.isPending && !tripsQuery.isError && (
 					<TravelStats
 						totalTrips={trips.length}
@@ -89,6 +96,11 @@ function RouteComponent() {
 						totalStops={totalStops}
 					/>
 				)}
+				<ProfileCompletion
+					name={user.name}
+					email={user.email}
+					image={user.image}
+				/>
 				<ProfileDetails email={user.email} name={user.name} />
 				<ProfileTrips />
 				<EditProfile name={user.name} />
