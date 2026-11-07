@@ -52,8 +52,9 @@ function RouteComponent() {
 	const filteredTrips = trips.filter((trip) => {
 		const searchTerm = search.trim().toLowerCase();
 
-		const matchesSearch = trip.name
-			.toLowerCase().includes(searchTerm) || (trip.description ?? "").toLowerCase().includes(searchTerm)
+		const matchesSearch =
+			trip.name.toLowerCase().includes(searchTerm) ||
+			(trip.description ?? "").toLowerCase().includes(searchTerm);
 		const status = getTripStatus(trip.startDate, trip.endDate);
 		const matchesStatus = statusFilter === "all" || status === statusFilter;
 
@@ -89,8 +90,6 @@ function RouteComponent() {
 			(trip) => getTripStatus(trip.startDate, trip.endDate) === "completed",
 		).length,
 	};
-
-		
 
 	return (
 		<div className="relative flex min-h-screen bg-[#E4EFE2]">

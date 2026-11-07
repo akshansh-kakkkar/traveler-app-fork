@@ -1,10 +1,10 @@
-import { ArrowUpRight, CalendarCheck, MapPin, Plane } from "lucide-react"
+import { ArrowUpRight, CalendarCheck, MapPin, Plane } from "lucide-react";
 
 interface TravelStatsProps {
-	totalTrips: number,
-	completedTrips: number,
-	upcomingTrips: number,
-	totalStops: number,
+	totalTrips: number;
+	completedTrips: number;
+	upcomingTrips: number;
+	totalStops: number;
 }
 
 export default function TravelStats({
@@ -37,32 +37,34 @@ export default function TravelStats({
 			value: totalStops,
 			icon: MapPin,
 			color: "bg-[#E8E9F8] text-[#555A9A]",
-		}
-	]
+		},
+	];
 
 	return (
 		<section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
 			{stats.map((stat) => {
 				const Icon = stat.icon;
-				return(
-				<div
-					key={stat.label}
-					className="rounded-2xl border border-[#D1DCCF] bg-white p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+				return (
+					<div
+						key={stat.label}
+						className="rounded-2xl border border-[#D1DCCF] bg-white p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+					>
 						<div className="flex items-center justify-between">
-							<div className={`flex h-11 w-11 items-center justify-center rounded-xl ${stat.color}`}>
+							<div
+								className={`flex h-11 w-11 items-center justify-center rounded-xl ${stat.color}`}
+							>
 								<Icon size={21} />
 							</div>
 						</div>
-						<p className="mt-5 text-3xl font-bold text-[#12271A]">
+						<p className="mt-5 font-bold text-3xl text-[#12271A]">
 							{stat.value}
 						</p>
-						<p className="mt-1 text-sm font-medium text-[#6C776D]">
+						<p className="mt-1 font-medium text-[#6C776D] text-sm">
 							{stat.label}
 						</p>
-				</div>
-				)
-
-})}
+					</div>
+				);
+			})}
 		</section>
-	)
+	);
 }

@@ -45,6 +45,8 @@
 		"@gsap/react": "^2.1.2",
 		"@traveler-app/env": "workspace:*",
 		"dotenv": "catalog:",
+		"echarts": "^6.1.0",
+		"echarts-for-react": "^3.0.6",
 		"lucide-react": "^1.55.0",
 		"resend": "^6.28.1",
 		"zod": "catalog:",
