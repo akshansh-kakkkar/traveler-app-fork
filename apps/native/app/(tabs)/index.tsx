@@ -69,7 +69,7 @@ export default function Home() {
 				<View className="mt-8 px-5">
 					<SectionHeader
 						title="Your trip"
-						actionLabel="Sign in"
+						actionLabel={session ? "All trips" : undefined}
 						onAction={() => router.push("/trips")}
 					/>
 
@@ -147,7 +147,7 @@ function Nudge({ text, action, onPress }: NudgeProps) {
 			<Text className="flex-1 text-muted text-sm">{text}</Text>
 			<Pressable
 				onPress={onPress}
-				className="active:oapcity-80 rounded-full bg-border px-4 py-2"
+				className="rounded-full bg-border px-4 py-2 active:opacity-80"
 			>
 				<Text className="font-semibold text-foreground text-sm">{action}</Text>
 			</Pressable>
