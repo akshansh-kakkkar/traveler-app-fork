@@ -1,161 +1,156 @@
+import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { Container } from "@/components/container";
-import { Chip } from "@/components/ui/Chip";
-import { Day } from "@/components/ui/Day";
-import { FieldRow } from "@/components/ui/FieldRow";
-import { ItemCard } from "@/components/ui/ItemCard";
-import { MetaPill } from "@/components/ui/MetaPill";
-import { PrimaryButton } from "@/components/ui/PrimaryButton";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
-import { SegmentControl } from "@/components/ui/SegmentControl";
+import {
+	ActivityIndicator,
+	Pressable,
+	ScrollView,
+	Text,
+	View,
+} from "react-native";
+import { FocusedStatusBar } from "@/components/FocusedStatusBar";
+import CurrentTripCard from "@/components/home/CurrentTripCard";
+import HomeHeader from "@/components/home/HomeHeader";
+import { MustSeeRail } from "@/components/home/MustSeeRail";
+import QuickPlanCard from "@/components/home/QuickPlanCard";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { authClient } from "@/lib/auth-client";
+import { useTabBarSpace } from "@/lib/tab-bar";
+import { pickFeaturedTrip } from "@/lib/trip-dates";
+import { trpc } from "@/utils/trpc";
+
+const CITY_ID = "kl";
+const MUST_SEE_COUNT = 8;
+const PLACES_FETCH_LIMIT = 50;
 
 export default function Home() {
 	const { data: session } = authClient.useSession();
 
-	const categories = [
-		{ label: "Food", icon: "fast-food" },
-		{ label: "Culture", icon: "color-palette" },
-		{ label: "Nature", icon: "leaf" },
-	] as const;
-	const [selected, setSelected] = useState<string[]>([]);
+	const bottomSpace = useTabBarSpace();
 
-	const toggle = (item: string) => {
-		setSelected((current) =>
-			current.includes(item)
-				? current.filter((x) => x !== item)
-				: [...current, item],
-		);
-	};
-
-	const PACES = ["Relaxed", "Normal", "Packed"];
-	const [pace, setPace] = useState<string>("Normal");
-
-	const startDate = new Date("2026-10-18");
-	const numDays = 3;
-
-	const days = Array.from({ length: numDays }, (_, i) => {
-		const d = new Date(startDate);
-		d.setDate(d.getDate() + i);
-		return {
-			weekday: d.toLocaleDateString("en", { weekday: "narrow" }),
-			date: d.getDate(),
-		};
+	const tripQuery = useQuery({
+		...trpc.trips.getAll.queryOptions(),
+		enabled: !!session,
 	});
 
-	const [activeDay, setActiveDay] = useState(0);
+	const featured = pickFeaturedTrip(tripQuery.data ?? []);
 
-	const [done, setDone] = useState(false);
+	const itemsQuery = useQuery({
+		...trpc.itinerary.getAll.queryOptions({ id: featured?.id ?? "" }),
+		enabled: !!featured,
+	});
+
+	const nextStop = (itemsQuery.data ?? []).find((item) => !item.done);
+
+	const placeQuery = useQuery({
+		...trpc.place.list.queryOptions({
+			cityId: CITY_ID,
+			limit: PLACES_FETCH_LIMIT,
+		}),
+		enabled: !!session,
+	});
+
+	const mustSee = [...(placeQuery.data?.places ?? [])]
+		.sort((a, b) => b.score - a.score)
+		.slice(0, MUST_SEE_COUNT);
+
+	const goPlan = () => router.push(session ? "/plan" : "/(auth)/sign-in");
+	const goDiscover = () => router.push("../discover");
 
 	return (
-		<Container
-			contentClassName="p-5"
-			scrollViewProps={{ showsVerticalScrollIndicator: false }}
-		>
-			<Text>Welcome back, {session?.user.name}</Text>
-			<TouchableOpacity
-				className="mx-5 mt-5 items-center rounded-xl bg-accent px-6 py-3 active:opacity-70"
-				onPress={() => router.push("/sign-in")}
-			>
-				<Text className="font-semibold text-accent-foreground">Sign in</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				className="mx-5 mt-2 items-center rounded-xl bg-accent px-6 py-3 active:opacity-70"
-				onPress={() => router.push("/sign-up")}
-			>
-				<Text className="font-semibold text-accent-foreground">Sign up</Text>
-			</TouchableOpacity>
-
-			<MetaPill
-				icon="flame"
-				label="hot"
-				className="m-5 bg-danger/85 text-white"
-			/>
-
-			<View className="ml-5 flex-row flex-wrap gap-2">
-				{categories.map((item) => (
-					<Chip
-						key={item.label}
-						label={item.label}
-						icon={item.icon}
-						selected={selected.includes(item.label)}
-						onPress={() => toggle(item.label)}
-						className=""
-					/>
-				))}
-			</View>
-
-			<Text className="mb-2 text-foreground text-sm">Pace</Text>
-			<SegmentControl options={PACES} value={pace} onChange={setPace} />
-
-			<FieldRow
-				icon="location-outline"
-				label="City"
-				value="Kuala Lumpur"
-				locked
-			/>
-
-			<FieldRow
-				icon="calendar-outline"
-				label="Start date"
-				value="Sun, 18 Oct"
-			/>
-
-			<FieldRow icon="time-outline" label="Days" value="1 to 7" />
-
+		<View className="flex-1 bg-background">
+			<FocusedStatusBar style="light" />
 			<ScrollView
-				horizontal
-				showsHorizontalScrollIndicator={false}
-				contentContainerClassName="gap-2 px-4"
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ paddingBottom: bottomSpace }}
 			>
-				{days.map((d, i) => (
-					<Day
-						key={d.date}
-						weekday={d.weekday}
-						date={d.date}
-						selected={i === activeDay}
-						onPress={() => setActiveDay(i)}
+				<HomeHeader name={session?.user.name} />
+				<QuickPlanCard onPlan={goPlan} />
+
+				<View className="mt-8 px-5">
+					<SectionHeader
+						title="Your trip"
+						actionLabel={session ? "All trips" : undefined}
+						onAction={() => router.push("/trips")}
 					/>
-				))}
+
+					{!session ? (
+						<Nudge
+							text="Sign in to see your trips here."
+							action="Sign in"
+							onPress={() => router.push("/(auth)/sign-in")}
+						/>
+					) : featured ? (
+						<CurrentTripCard
+							name={featured.name}
+							startDate={featured.startDate}
+							endDate={featured.endDate}
+							stops={featured.stops}
+							done={featured.done}
+							nextStop={nextStop}
+							onPress={() =>
+								router.push({
+									pathname: "/trip/[id]",
+									params: { id: featured.id },
+								})
+							}
+						/>
+					) : tripQuery.isPending ? (
+						<ActivityIndicator />
+					) : tripQuery.isError ? (
+						<Nudge
+							text="Couldn't load your trips"
+							action="Try again."
+							onPress={() => tripQuery.refetch()}
+						/>
+					) : (
+						<Nudge
+							text="Nothing coming up yet."
+							action="Plan a trip"
+							onPress={goPlan}
+						/>
+					)}
+				</View>
+
+				<SectionHeader
+					title="Categories"
+					actionLabel="See all"
+					onAction={goDiscover}
+					className="mt-8 px-5"
+				/>
+
+				{mustSee.length > 0 && (
+					<>
+						<SectionHeader
+							title="Must-see in KL"
+							actionLabel="See all"
+							onAction={goDiscover}
+							className="mt-8 px-5"
+						/>
+
+						<MustSeeRail places={mustSee} />
+					</>
+				)}
 			</ScrollView>
+		</View>
+	);
+}
 
-			<ItemCard
-				startTime="11:30 am"
-				category="food"
-				description="Kaya toast and kopi at a kopitiam open since 1928."
-				done={done}
-				durationMin={60}
-				onToggle={() => setDone(!done)}
-				title="Feast"
-				className="mt-2"
-			/>
+type NudgeProps = {
+	text: string;
+	action: string;
+	onPress: () => void;
+};
 
-			<ItemCard
-				startTime="11:30 am"
-				category="food"
-				description="Kaya toast and kopi at a kopitiam open since 1928."
-				done={done}
-				durationMin={60}
-				onToggle={() => setDone(!done)}
-				title="Feast"
-				isNext
-				className="mt-2"
-			/>
-
-			<PrimaryButton
-				label="Build my trip"
-				onPress={() => {}}
-				className="mt-2"
-			/>
-
-			<ScreenHeader
-				title="Plan a trip"
-				eyebrow="Kuala Lumpur"
-				onBack={() => {}}
-				right
-			/>
-		</Container>
+function Nudge({ text, action, onPress }: NudgeProps) {
+	return (
+		<View className="flex-row items-center justify-between gap-3 rounded-3xl bg-surface p-4">
+			<Text className="flex-1 text-muted text-sm">{text}</Text>
+			<Pressable
+				onPress={onPress}
+				className="rounded-full bg-border px-4 py-2 active:opacity-80"
+			>
+				<Text className="font-semibold text-foreground text-sm">{action}</Text>
+			</Pressable>
+		</View>
 	);
 }
