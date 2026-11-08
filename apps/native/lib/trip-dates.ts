@@ -114,3 +114,8 @@ export function pickFeaturedTrip<T extends DatedTrip>(
 
 	return withStatus("in-progress") ?? withStatus("upcoming");
 }
+
+export function daysUntil(start: DateInput, now = new Date()): number {
+	if (!start) return 0;
+	return Math.max(0, dayDiff(now, new Date(start)));
+}
