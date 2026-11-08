@@ -7,10 +7,9 @@ import {
 	useRouterState,
 } from "@tanstack/react-router";
 import { Toaster } from "@traveler-app/ui/components/sonner";
-
+import NotFound from "@/components/NotFound";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { trpc } from "@/utils/trpc";
-
 import "../index.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import TravelLoader from "@/components/TravelLoader";
@@ -23,6 +22,7 @@ export interface RouterAppContext {
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	component: RootComponent,
+	notFoundComponent: NotFound,
 	head: () => ({
 		meta: [
 			{

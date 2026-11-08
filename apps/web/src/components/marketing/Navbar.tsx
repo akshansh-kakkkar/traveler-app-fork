@@ -2,6 +2,7 @@ import { useGSAP } from "@gsap/react";
 import { Link, useLocation } from "@tanstack/react-router";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 gsap.registerPlugin(useGSAP);
 export default function Navbar() {
@@ -42,6 +43,7 @@ export default function Navbar() {
 	);
 	const [scrolled, setScrolled] = useState(false);
 	const location = useLocation();
+	const { user, isPending } = useCurrentUser();
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -104,12 +106,25 @@ export default function Navbar() {
 					Upcoming Packages
 				</Link>
 			</div>
-			<a
-				href="/login"
-				className="navbar-login hidden rounded-lg bg-[#DF6951] px-4 py-1 font-medium sm:block"
-			>
-				Login
-			</a>
+			{!isPending && (
+				<div className="hidden items-center gap-4 sm:flex">
+					{user ? (
+						<Link
+							to="/profile"
+							className="navbar-login rounded-lg bg-[#DF6951] px-4 py-1 font-medium"
+						>
+							Profile
+						</Link>
+					) : (
+						<Link
+							to="/login"
+							className="navbar-login rounded-lg bg-[#DF6951] px-4 py-1 font-medium"
+						>
+							Login
+						</Link>
+					)}
+				</div>
+			)}
 		</nav>
 	);
 }
