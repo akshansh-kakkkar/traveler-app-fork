@@ -20,10 +20,6 @@ export default function ProfileCompletion({
 			label: "Email address",
 			completed: !!name.trim(),
 		},
-		{
-			label: "Profile picture",
-			completed: !!image,
-		},
 	];
 
 	const completedCount = fields.filter((field) => field.completed).length;
@@ -31,7 +27,7 @@ export default function ProfileCompletion({
 
 	return (
 		<section className="rounded-2xl border border-[#D1DCCF] bg-white p-6">
-			<div className="mb-4 flex items-center justify-center">
+			<div className="mb-4 flex flex-col items-center justify-center gap-4 text-center">
 				<div>
 					<h2 className="flex text-[#12271] text-lg">Profile Completion</h2>
 					<p className="mt-1 text-[#6C776D] text-sm">

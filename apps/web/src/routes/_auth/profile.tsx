@@ -9,6 +9,7 @@ import ProfileCompletion from "@/components/Profile/ProfileCompletion";
 import ProfileDetails from "@/components/Profile/ProfileDetails";
 import ProfileHeader from "@/components/Profile/ProfileHeader";
 import ProfileTrips from "@/components/Profile/ProfileTrips";
+import RecentActivity from "@/components/Profile/RecentActivity";
 import TravelStats from "@/components/Profile/TravelStats";
 import TripStatusCart from "@/components/Profile/TripStatusChart";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -16,7 +17,13 @@ import { trpc } from "@/utils/trpc";
 export const Route = createFileRoute("/_auth/profile")({
 	component: RouteComponent,
 });
-
+type Activity = {
+	id: string;
+	title: string;
+	description: string;
+	date: string;
+	type: "created" | "completed" | "stops";
+};
 function RouteComponent() {
 	const { user, isPending } = useCurrentUser();
 	const tripsQuery = useQuery(trpc.trips.getAll.queryOptions());
@@ -69,6 +76,37 @@ function RouteComponent() {
 			new Date(trip.endDate) >= now,
 	).length;
 
+	const activities = trips.flatMap((trip) => {
+		const entries: Activity[] = [
+			{
+				id: `${trip.id}-created`,
+				title: "Trip created",
+				description: `You created "${trip.name}"`,
+				date: trip.createdAt,
+				type: "created",
+			},
+		];
+
+		if (trip.endDate && new Date(trip.endDate) < now) {
+			entries.push({
+				id: `${trip.id}-completed`,
+				title: "Trip Completed",
+				description: `Your trip "${trip.name}" has ended`,
+				date: trip.endDate,
+				type: "completed",
+			});
+		}
+
+		return entries;
+	});
+
+	const RecentActivities = activities
+		.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+		.slice(0, 5);
+
+	const recentActivities = activities
+		.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+		.slice(0, 5);
 	return (
 		<div className="relative flex h-screen bg-[#E4EFE2]">
 			<DashboardSideBar onExpandedChange={setIsSideBarExpanded} />
@@ -96,15 +134,11 @@ function RouteComponent() {
 						totalStops={totalStops}
 					/>
 				)}
-				<ProfileCompletion
-					name={user.name}
-					email={user.email}
-					image={user.image}
-				/>
+				<ProfileCompletion name={user.name} email={user.email} />
 				<ProfileDetails email={user.email} name={user.name} />
 				<ProfileTrips />
 				<EditProfile name={user.name} />
-
+				<RecentActivity activities={recentActivities} />
 				<AccountSettings />
 			</div>
 		</div>
