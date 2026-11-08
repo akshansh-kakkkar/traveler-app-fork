@@ -180,30 +180,13 @@ export default function SignInForm({
 					<button
 						type="button"
 						disabled={isGooglePending}
-						onClick={async () => {
-							setIsGooglePending(true);
-							try {
-								await authClient.signIn.social({
-									provider: "google",
-									callbackURL: "/dashboard",
-								});
-							} catch {
-								toast.error("Google sign-in failled. Please try again.");
-								setIsGooglePending(false);
-							}
-						}}
+						onClick={async ()=>toast.error("This feature is not available yet.")}
 						className="flex w-full cursor-pointer items-center justify-center gap-4 rounded-md border-1 border-black py-2 font-medium font-poppins font-volkhov text-2xl text-black transition-all duration-300 hover:scale-98"
 					>
-						{isGooglePending ? (
-							<Loader2 className="animate-spin text-[#DF6951]" />
-						) : (
-							<>
 								<span>
 									<img src="/google.png" />
 								</span>
 								<span>Continue with Google</span>
-							</>
-						)}
 					</button>
 					<div className="flex h-2 w-full items-center justify-center gap-1 py-4 font-light text-black text-sm">
 						Don't have an account?

@@ -9,10 +9,31 @@ export const Route = createFileRoute("/_auth/dashboard")({
 	component: RouteComponent,
 });
 
-function RouteComponent() {
-	const { session } = Route.useRouteContext();
+function getGreeting(){
+	const hour = new Date().getHours();
 
+	if(hour >= 5 && hour < 12) return "Good morning";
+	if(hour >= 12 && hour < 17) return "Good afternoon";
+	if(hour >= 17 && hour < 21) return "Good evening";
+
+	return "Good night"
+}
+
+function getFormattedDate(){
+	return new Intl.DateTimeFormat("en-IN", {
+		weekday: "long",
+		day: "numeric",
+		month: "long",
+		year: "numeric",
+	}).format(new Date());
+}
+
+function RouteComponent() {
+	const { session } = Route.useRouteContext();	
 	const privateData = useQuery(trpc.privateData.queryOptions());
+	const tripsQuery =  useQuery(trpc.trips.getAll.queryOptions());
+	const totalTrips = tripsQuery.data?.length ?? 0;
+
 	const [isSideBarExpanded, setIsSideBarExpanded] = useState(false);
 	return (
 		<div className="relative flex h-screen bg-[#E4EFE2]">
@@ -24,11 +45,21 @@ function RouteComponent() {
 			>
 				<div className="flex flex-col gap-1">
 					<div className="font-bold text-2xl text-[#12271A]">
-						Welcome Back {session.data?.user.name},
+						{getGreeting()} {session.data?.user.name},
 					</div>
 					<div className="font-medium text-[#6C776D] text-sm">
 						Plan your Trip today with TourNet
+						<span className="mx-2">.</span>
+						{getFormattedDate()}
 					</div>
+				</div>
+				<div className="mx-12 mt-8 rounded-2xl bg-white p-6 shadow-sm	">
+					<p className="text-sm font-medium text-[#6C776D]">
+						Your planned trips
+					</p>
+					<p className="mt-2 font-bold text-4xl text-[#12271A]">
+						{tripsQuery.isPending ? "..." : totalTrips}
+					</p>
 				</div>
 				<div className="flex w-full justify-center text-center">
 					<Link
